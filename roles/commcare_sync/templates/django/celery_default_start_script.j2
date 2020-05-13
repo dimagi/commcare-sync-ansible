@@ -1,0 +1,22 @@
+#!/bin/sh
+
+echo "Starting {{ app_name }}_celery_default as `whoami`"
+
+# Activate the virtual environment.
+cd {{ project_dir }}
+. {{ virtualenv_dir }}/bin/activate
+
+# Set additional environment variables.
+. {{ virtualenv_dir }}/bin/postactivate
+
+# Programs meant to be run under supervisor should not daemonize themselves
+# (do not use --daemon).
+exec celery worker \
+    -n worker1@%h \
+    --app {{ app_name }} \
+    --loglevel DEBUG \
+    --logfile {{ log_dir }}/celery.log \
+    -Q celery \
+    --concurrency 10 \
+    --pool eventlet \
+    --events

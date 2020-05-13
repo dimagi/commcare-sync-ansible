@@ -1,0 +1,193 @@
+---
+
+# Virtualenv
+
+- name: Install virtualenv.
+  pip:
+    name: virtualenv
+  tags: packages
+
+- name: Create the virtualenv.
+  command: virtualenv -p {{ virtualenv_python_version }} {{ virtualenv_dir }}
+  args:
+    creates: "{{ virtualenv_dir }}/bin/activate"
+
+- name: Change ownership of virtualenv.
+  file:
+    dest: "{{ virtualenv_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    recurse: yes
+
+- name: Create the app folders.
+  file:
+    path: "{{ item }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    state: directory
+  with_items:
+    - "{{ log_dir }}"
+    - "{{ run_dir }}"
+    - "{{ static_dir }}"
+    - "{{ media_dir }}"
+    - "{{ html_dir }}"
+
+- name: Create the virtualenv postactivate script to set environment variables.
+  template:
+    src: django/virtualenv_postactivate_script.sh.j2
+    dest: "{{ virtualenv_dir }}/bin/postactivate"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    backup: yes
+  tags: deploy
+
+
+# Source
+
+- name: Create {{ project_dir }}.
+  file:
+    path: "{{ project_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    state: directory
+
+- name: Pull latest source code.
+  become: yes
+  become_user: "{{ app_user }}"
+  git:
+    repo: git@github.com:dimagi/commcare-sync.git
+    dest: "{{ project_dir }}"
+    version: master
+    recursive: no
+    accept_hostkey: yes
+#  when: env != 'dev'
+  tags: deploy
+
+
+# Django
+
+- name: Install packages required by the Django app inside virtualenv.
+  pip:
+    virtualenv: "{{ virtualenv_dir }}"
+    requirements: "{{ requirements_file }}"
+  tags: deploy
+
+
+- name: Create the local settings file
+  template:
+    src: django/local.py.j2
+    dest: "{{ project_dir }}/{{ app_name }}/local.py"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    backup: yes
+  tags: deploy
+
+- name: Run Django database migrations.
+  become: yes
+  become_user: "{{ app_user }}"
+  django_manage:
+    command: migrate
+    app_path: "{{ project_dir }}"
+    virtualenv: "{{ virtualenv_dir }}"
+    settings: "{{ django_settings_module }}"
+    database: "{{ item }}"
+  environment: "{{ app_environment }}"
+  with_items:
+    - default
+  when: django_migrate is defined and django_migrate
+  tags: deploy
+
+- name: Run Django collectstatic.
+  become: yes
+  become_user: "{{ app_user }}"
+  django_manage:
+    command: collectstatic
+    app_path: "{{ project_dir }}"
+    virtualenv: "{{ virtualenv_dir }}"
+    settings: "{{ django_settings_module }}"
+  environment: "{{ app_environment }}"
+  when: django_collectstatic is defined and django_collectstatic
+  tags: deploy
+
+
+# Start scripts + Supervisor
+
+- name: Ensure gunicorn & celery is installed in the virtualenv.
+  pip:
+    virtualenv: "{{ virtualenv_dir }}"
+    name:
+      - gunicorn
+      - celery
+      - eventlet
+
+- name: Create the Gunicorn start script.
+  template:
+    src: django/gunicorn_start_script.j2
+    dest: "{{ virtualenv_dir }}/bin/gunicorn_start"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    backup: yes
+
+- name: Create the Celery default start script.
+  template:
+    src: django/celery_default_start_script.j2
+    dest: "{{ virtualenv_dir }}/bin/celery_default_start"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    backup: yes
+
+- name: Ensure the Supervisor service is running.
+  service:
+    name: supervisor
+    state: started
+    enabled: yes
+
+- name: Create the Gunicorn Supervisor config file.
+  template:
+    src: django/gunicorn_supervisor_config.j2
+    dest: /etc/supervisor/conf.d/{{ app_name }}.conf
+    backup: yes
+
+#- name: Create the Celery default Supervisor config file.
+#  template:
+#    src: django/celery_default_supervisor_config.j2
+#    dest: /etc/supervisor/conf.d/{{ app_name }}_celery_default.conf
+#    backup: yes
+
+- name: Create Supervisor log files.
+  copy:
+    content: ""
+    dest: "{{ log_dir }}/{{ item }}"
+    force: no
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0644
+  with_items:
+    - celery.log
+    - gunicorn.log
+    - django.log
+
+- name: Re-read the Supervisor config files.
+  supervisorctl:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ app_name }}"
+#    - "{{ app_name }}_celery_default"
+
+- name: Restart the Supervisor config files.
+  supervisorctl:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - "{{ app_name }}"
+#    - "{{ app_name }}_celery_default"
+  tags: deploy
+
+...

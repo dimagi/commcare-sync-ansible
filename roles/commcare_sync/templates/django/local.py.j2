@@ -1,0 +1,20 @@
+from .settings import *
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '{{ default_db_name }}',
+        'USER': '{{ default_db_user }}',
+        'PASSWORD': '{{ default_db_password }}',
+        'HOST': '{{ default_db_host }}',
+        'PORT': '{{ default_db_port }}',
+    }
+}
+
+
+ACCOUNT_ADAPTER = 'apps.users.account_adapter.EmailAsUsernameAdapter'
+# ACCOUNT_ADAPTER = 'apps.users.account_adapter.NoNewUsersAccountAdapter'
+
+ALLOWED_HOSTS = [
+    '192.168.11.10',
+]

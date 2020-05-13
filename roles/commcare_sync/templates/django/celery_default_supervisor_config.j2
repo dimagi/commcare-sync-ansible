@@ -1,0 +1,5 @@
+[program:{{ app_name }}_celery_default]
+command = {{ virtualenv_dir }}/bin/celery_default_start
+user = {{ app_user }}
+stdout_logfile = {{ log_dir }}/celery.log
+stderr_logfile = {{ log_dir }}/celery.log

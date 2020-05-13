@@ -1,0 +1,88 @@
+---
+
+- name: Add the PostgreSQL repository key to the apt trusted keys.
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    id: ACCC4CF8
+    state: present
+
+- name: Add the PostgreSQL repository to the apt sources list.
+  apt_repository:
+    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+    update_cache: "{{ apt_update_cache }}"
+    state: present
+    filename: postgres
+
+- name: Ensure locale is available.
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
+
+- name: Set default locale.
+  command: localectl set-locale LANG="en_US.UTF-8"
+
+- name: Install PostgreSQL {{ postgresql_version }}.
+  apt:
+    name:
+      - postgresql-{{ postgresql_version }}
+      - postgresql-contrib-{{ postgresql_version }}
+      - "{{ base_python_package }}-psycopg2"
+    update_cache: "{{ apt_update_cache }}"
+    state: present
+  tags: packages
+
+- name: Create PostgreSQL config
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  template:
+    src: postgres/postgresql.conf.j2
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    mode: 0640
+  notify: restart postgresql
+
+- name: Create PostgreSQL ACL
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  template:
+    src: postgres/pg_hba.conf.j2
+    dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+    mode: 0640
+  notify: restart postgresql
+
+- name: Ensure the PostgreSQL service is running.
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Ensure the default database is created.
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  postgresql_db:
+    name: "{{ default_db_name }}"
+    encoding: 'UTF-8'
+    lc_collate: 'en_US.UTF-8'
+    lc_ctype: 'en_US.UTF-8'
+    template: 'template1'
+    state: present
+
+- name: Ensure the default user has access to the database.
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  postgresql_user:
+    db: "{{ default_db_name }}"
+    name: "{{ default_db_user }}"
+    password: "{{ default_db_password }}"
+    encrypted: yes
+    priv: ALL
+    state: present
+
+- name: Ensure the default user does not have unnecessary privileges.
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  postgresql_user:
+    name: "{{ default_db_user }}"
+    role_attr_flags: NOSUPERUSER,CREATEDB
+    state: present
+
+...

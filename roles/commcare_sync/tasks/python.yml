@@ -1,0 +1,15 @@
+---
+
+- name: Add the deadsnakes repository
+  apt_repository:
+    repo: ppa:deadsnakes/ppa
+    update_cache: "{{ apt_update_cache }}"
+    state: present
+
+- name: Install the appropriate Python version
+  apt:
+    name:
+      - "{{virtualenv_python_version}}"
+      - "{{virtualenv_python_version}}-dev"  # psycopg2 dependency
+    update_cache: "{{ apt_update_cache }}"
+    state: present

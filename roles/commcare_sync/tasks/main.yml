@@ -1,0 +1,115 @@
+---
+
+- name: Test
+  command: echo it works!
+
+# Python
+
+- include_tasks: python.yml
+  tags: python
+
+# Swap
+
+- include_tasks: create_swap_file.yml
+  when: swap_file_enabled
+  tags: swap
+
+
+# Packages
+
+- name: Install security updates.
+  apt:
+    default_release: "{{ ansible_distribution_release }}-security"
+    update_cache: "{{ apt_update_cache }}"
+    upgrade: dist
+  tags:
+    - packages
+    - packages.security
+    - skip_ansible_lint
+  when: env != 'dev'
+
+- name: Install base packages.
+  apt:
+    name:
+      - locales
+      - build-essential
+      - acl
+      - ntp
+      - htop
+      - git
+      - vim
+      - screen
+      - curl
+      - "{{ virtualenv_python_version }}-distutils"
+      - "{{ base_python_package }}-pip"
+      - "i{{ base_python_package }}"
+      - supervisor
+      - libpq-dev
+    update_cache: "{{ apt_update_cache }}"
+    state: present
+  tags:
+    - packages
+    - skip_ansible_lint
+
+- name: Upgrade pip.
+  pip:
+    name: pip
+    state: latest
+  tags:
+    - packages
+    - skip_ansible_lint
+
+
+# Users & Groups
+
+- name: Create the app group.
+  group:
+    name: "{{ app_group }}"
+    system: yes
+    state: present
+
+- name: Create the app user.
+  user:
+    name: "{{ app_user }}"
+    group: "{{ app_group }}"
+    shell: /bin/bash
+    state: present
+
+- name: Create {{ base_dir }} folder.
+  file:
+    path: "{{ base_dir }}"
+    group: "{{ app_group }}"
+    mode: 0755
+    state: directory
+
+- name: Create user .bash_aliases file.
+  template:
+    src: system/bash_aliases_script.sh.j2
+    dest: "{{ home_dir }}/.bash_aliases"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0740
+    backup: yes
+  tags: deploy
+
+
+# Database
+
+- include_tasks: postgres.yml
+  tags: postgres
+
+
+# Django
+
+- include_tasks: django.yml
+  tags:
+    - django
+    - deploy
+
+
+# NGINX
+
+- include_tasks: nginx.yml
+  tags: nginx
+
+...

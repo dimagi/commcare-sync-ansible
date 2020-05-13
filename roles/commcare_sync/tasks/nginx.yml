@@ -1,0 +1,69 @@
+---
+
+# NGINX
+
+- name: Install NGINX.
+  apt:
+    name: nginx
+    update_cache: "{{ apt_update_cache }}"
+    state: present
+  tags: packages
+
+- name: Start NGINX.
+  service:
+    name: ufw
+    enabled: yes
+    state: started
+
+- name: Adding 'www-data' user to {{ app_group }} group.
+  user:
+    name: www-data
+    groups: "{{ app_group }}"
+    append: yes
+
+- name: Generate a Diffie-Hellman group.
+  command: openssl dhparam -out /etc/ssl/private/dhparams.pem 2048
+  args:
+    creates: /etc/ssl/private/dhparams.pem
+  when: env != 'dev'
+
+- name: Create {{ app_name }} {{ env }} nginx config.
+  template:
+    src: nginx/gunicorn_nginx_without_ssl_config.j2
+    dest: /etc/nginx/sites-available/{{ project_name }}.conf
+    backup: yes
+  when: env == 'dev'
+
+- name: Create {{ app_name }} {{ env }} nginx config.
+  template:
+    src: nginx/gunicorn_nginx_with_ssl_config.j2
+    dest: /etc/nginx/sites-available/{{ project_name }}.conf
+    backup: yes
+  when: env != 'dev'
+
+- name: Create {{ app_name }} {{ env }} nginx ssl partial config.
+  template:
+    src: nginx/nginx_ssl_partial_config.j2
+    dest: /etc/nginx/sites-available/{{ project_name }}-ssl.partial.conf
+    backup: yes
+  when: env != 'dev'
+
+- name: Enable {{ app_name }} nginx config.
+  file:
+    src: /etc/nginx/sites-available/{{ project_name }}.conf
+    dest: /etc/nginx/sites-enabled/{{ project_name }}.conf
+    state: link
+
+- name: Disable default nginx config.
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- include_tasks: install_certbot.yml
+  tags: certbot
+  when: env != 'dev'
+
+- name: Test & reload nginx config.
+  shell: nginx -t && nginx -s reload
+
+...

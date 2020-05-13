@@ -1,0 +1,17 @@
+---
+
+apt_update_cache: yes
+
+app_user: "{{ ansible_user }}"
+app_name: commcare_sync
+project_name: commcare_sync
+requirements_file: "{{ project_dir }}/requirements.txt"
+django_settings_module: "{{ app_name }}.local"
+google_analytics_id: ""
+
+# These variables are normally encrypted and stored in an ansible vault.
+vault_default_db_password: commcarehq
+vault_sentry_dsn: https://<secret>@sentry.io/<project>
+vault_mapbox_token: ""
+
+...
