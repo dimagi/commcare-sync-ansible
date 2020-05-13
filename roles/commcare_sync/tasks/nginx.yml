@@ -32,21 +32,6 @@
     src: nginx/gunicorn_nginx_without_ssl_config.j2
     dest: /etc/nginx/sites-available/{{ project_name }}.conf
     backup: yes
-  when: env == 'dev'
-
-- name: Create {{ app_name }} {{ env }} nginx config.
-  template:
-    src: nginx/gunicorn_nginx_with_ssl_config.j2
-    dest: /etc/nginx/sites-available/{{ project_name }}.conf
-    backup: yes
-  when: env != 'dev'
-
-- name: Create {{ app_name }} {{ env }} nginx ssl partial config.
-  template:
-    src: nginx/nginx_ssl_partial_config.j2
-    dest: /etc/nginx/sites-available/{{ project_name }}-ssl.partial.conf
-    backup: yes
-  when: env != 'dev'
 
 - name: Enable {{ app_name }} nginx config.
   file:
@@ -58,10 +43,6 @@
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
-
-- include_tasks: install_certbot.yml
-  tags: certbot
-  when: env != 'dev'
 
 - name: Test & reload nginx config.
   shell: nginx -t && nginx -s reload
