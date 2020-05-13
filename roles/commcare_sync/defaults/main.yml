@@ -13,16 +13,17 @@ app_user: "{{ app_name }}"
 home_dir: /home/{{ app_user }}
 app_group: webapps
 project_name: commcare_sync
-base_dir: /webapps
+base_dir: "{{home_dir}}/www"
 project_dir: "{{ base_dir }}/{{ project_name }}"
+src_dir: "{{ base_dir }}/{{ project_name }}/code_root"
 virtualenv_dir: "{{ base_dir }}/.virtualenvs/{{ project_name }}"
 virtualenv_python_version: python3.8
-requirements_file: "{{ project_dir }}/requirements.txt"
-run_dir: "{{ virtualenv_dir }}/run"
+requirements_file: "{{ src_dir }}/requirements.txt"
+run_dir: "{{ base_dir }}/run"
 log_dir: "{{ base_dir }}/log"
-static_dir: "{{ project_dir }}/static_root"
-media_dir: "{{ virtualenv_dir }}/media"
-html_dir: "{{ virtualenv_dir }}/html"
+static_dir: "{{ src_dir }}/static_root"
+media_dir: "{{ src_dir }}/media"
+html_dir: "{{ src_dir }}/html"
 
 postgresql_version: 10
 postgresql_user: postgres

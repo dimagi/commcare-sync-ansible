@@ -19,20 +19,6 @@
     group: "{{ app_group }}"
     recurse: yes
 
-- name: Create the app folders.
-  file:
-    path: "{{ item }}"
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-    mode: 0750
-    state: directory
-  with_items:
-    - "{{ log_dir }}"
-    - "{{ run_dir }}"
-    - "{{ static_dir }}"
-    - "{{ media_dir }}"
-    - "{{ html_dir }}"
-
 - name: Create the virtualenv postactivate script to set environment variables.
   template:
     src: django/virtualenv_postactivate_script.sh.j2
@@ -59,12 +45,26 @@
   become_user: "{{ app_user }}"
   git:
     repo: git@github.com:dimagi/commcare-sync.git
-    dest: "{{ project_dir }}"
+    dest: "{{ src_dir }}"
     version: master
     recursive: no
     accept_hostkey: yes
 #  when: env != 'dev'
   tags: deploy
+
+- name: Create the app folders.
+  file:
+    path: "{{ item }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    state: directory
+  with_items:
+    - "{{ log_dir }}"
+    - "{{ run_dir }}"
+    - "{{ static_dir }}"
+    - "{{ media_dir }}"
+    - "{{ html_dir }}"
 
 
 # Django
@@ -79,7 +79,7 @@
 - name: Create the local settings file
   template:
     src: django/local.py.j2
-    dest: "{{ project_dir }}/{{ app_name }}/local.py"
+    dest: "{{ src_dir }}/{{ app_name }}/local.py"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: 0750
@@ -91,7 +91,7 @@
   become_user: "{{ app_user }}"
   django_manage:
     command: migrate
-    app_path: "{{ project_dir }}"
+    app_path: "{{ src_dir }}"
     virtualenv: "{{ virtualenv_dir }}"
     settings: "{{ django_settings_module }}"
     database: "{{ item }}"
@@ -106,7 +106,7 @@
   become_user: "{{ app_user }}"
   django_manage:
     command: collectstatic
-    app_path: "{{ project_dir }}"
+    app_path: "{{ src_dir }}"
     virtualenv: "{{ virtualenv_dir }}"
     settings: "{{ django_settings_module }}"
   environment: "{{ app_environment }}"
