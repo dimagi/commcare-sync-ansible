@@ -21,12 +21,6 @@
     groups: "{{ app_group }}"
     append: yes
 
-- name: Generate a Diffie-Hellman group.
-  command: openssl dhparam -out /etc/ssl/private/dhparams.pem 2048
-  args:
-    creates: /etc/ssl/private/dhparams.pem
-  when: env != 'dev'
-
 - name: Create {{ app_name }} {{ env }} nginx config.
   template:
     src: nginx/gunicorn_nginx_without_ssl_config.j2

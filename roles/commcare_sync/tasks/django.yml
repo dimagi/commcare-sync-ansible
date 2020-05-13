@@ -49,7 +49,6 @@
     version: master
     recursive: no
     accept_hostkey: yes
-#  when: env != 'dev'
   tags: deploy
 
 - name: Create the app folders.
