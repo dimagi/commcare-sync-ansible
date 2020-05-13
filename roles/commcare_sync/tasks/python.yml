@@ -6,6 +6,15 @@
     update_cache: "{{ apt_update_cache }}"
     state: present
 
+# see: https://github.com/deadsnakes/issues/issues/98#issuecomment-552204206
+- name: Purge potentially conflicting dependencies
+  apt:
+    name:
+      - "{{virtualenv_python_version}}-distutils"
+      - "{{virtualenv_python_version}}-lib2to3"
+    purge: yes
+    state: absent
+
 - name: Install the appropriate Python version
   apt:
     name:

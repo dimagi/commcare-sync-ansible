@@ -3,11 +3,6 @@
 - name: Test
   command: echo it works!
 
-# Python
-
-- include_tasks: python.yml
-  tags: python
-
 # Swap
 
 - include_tasks: create_swap_file.yml
@@ -40,7 +35,7 @@
       - vim
       - screen
       - curl
-      - "{{ virtualenv_python_version }}-distutils"
+      - "{{ base_python_package }}-distutils"
       - "{{ base_python_package }}-pip"
       - "i{{ base_python_package }}"
       - supervisor
@@ -55,9 +50,16 @@
   pip:
     name: pip
     state: latest
+    executable: pip3
   tags:
     - packages
     - skip_ansible_lint
+
+
+# Python
+
+- include_tasks: python.yml
+  tags: python
 
 
 # Users & Groups
