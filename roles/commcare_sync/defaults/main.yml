@@ -24,7 +24,6 @@ run_dir: "{{ base_dir }}/run"
 log_dir: "{{ base_dir }}/log"
 static_dir: "{{ src_dir }}/static_root"
 media_dir: "{{ src_dir }}/media"
-html_dir: "{{ src_dir }}/html"
 
 postgresql_version: 10
 postgresql_user: postgres

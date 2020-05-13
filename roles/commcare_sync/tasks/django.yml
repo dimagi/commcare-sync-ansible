@@ -64,7 +64,6 @@
     - "{{ run_dir }}"
     - "{{ static_dir }}"
     - "{{ media_dir }}"
-    - "{{ html_dir }}"
 
 
 # Django
