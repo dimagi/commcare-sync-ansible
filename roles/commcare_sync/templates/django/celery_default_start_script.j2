@@ -17,6 +17,4 @@ exec celery worker \
     --loglevel DEBUG \
     --logfile {{ log_dir }}/celery.log \
     -Q celery \
-    --concurrency 10 \
-    --pool eventlet \
-    --events
+    --concurrency 10
