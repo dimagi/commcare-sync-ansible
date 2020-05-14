@@ -44,7 +44,7 @@
   become: yes
   become_user: "{{ app_user }}"
   git:
-    repo: git@github.com:dimagi/commcare-sync.git
+    repo: https://github.com/dimagi/commcare-sync.git
     dest: "{{ src_dir }}"
     version: master
     recursive: no
