@@ -1,5 +1,4 @@
 # CommCare Sync Ansible
----
 
 Tools for setting up and deploying [commcare-sync](https://github.com/dimagi/commcare-sync).
 
