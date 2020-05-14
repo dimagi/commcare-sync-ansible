@@ -9,10 +9,11 @@ on a server.
 
 | Name          | Description / Reason |
 | ------------- | ----------- |
-| Postgres      | Deafult database |
+| Postgres 10   | Default database |
 | Redis         | Message Broker for Celery |
 | Python 3.8    | Running commcare-sync |
 | Nginx         | Web Server |
+| Supervisord   | Process manager |
 | CommCare Sync | Django process for web application, and Celery process for background and scheduled tasks |
 
 
