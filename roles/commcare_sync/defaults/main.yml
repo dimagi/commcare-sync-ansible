@@ -13,7 +13,7 @@ app_name: commcare_sync
 app_user: "{{ app_name }}"
 home_dir: /home/{{ app_user }}
 app_group: webapps
-project_name: commcare_sync
+project_name: commcare-sync
 base_dir: "{{home_dir}}/www"
 project_dir: "{{ base_dir }}/{{ project_name }}"
 src_dir: "{{ base_dir }}/{{ project_name }}/code_root"
