@@ -17,4 +17,5 @@ exec celery worker \
     --loglevel DEBUG \
     --logfile {{ log_dir }}/celery.log \
     -Q celery \
-    --concurrency 10
+    --concurrency 10 \
+    -B
