@@ -8,37 +8,44 @@
     update_cache: "{{ apt_update_cache }}"
     state: present
   tags: packages
+  tags: nginx
 
 - name: Start NGINX.
   service:
     name: ufw
     enabled: yes
     state: started
+  tags: nginx
 
 - name: Adding 'www-data' user to {{ app_group }} group.
   user:
     name: www-data
     groups: "{{ app_group }}"
     append: yes
+  tags: nginx
 
 - name: Create {{ app_name }} {{ env }} nginx config.
   template:
     src: nginx/gunicorn_nginx_without_ssl_config.j2
     dest: /etc/nginx/sites-available/{{ project_name }}.conf
     backup: yes
+  tags: nginx
 
 - name: Enable {{ app_name }} nginx config.
   file:
     src: /etc/nginx/sites-available/{{ project_name }}.conf
     dest: /etc/nginx/sites-enabled/{{ project_name }}.conf
     state: link
+  tags: nginx
 
 - name: Disable default nginx config.
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
+  tags: nginx
 
 - name: Test & reload nginx config.
   shell: nginx -t && nginx -s reload
+  tags: nginx
 
 ...
