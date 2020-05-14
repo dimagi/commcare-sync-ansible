@@ -13,6 +13,7 @@ upstream {{ app_name }} {
 
 server {
   # Serve content
+  server_name {{ public_host }};
   listen 80 default_server;
   listen [::]:80 default_server;
 
