@@ -146,7 +146,7 @@ sudo certbot --nginx
 
 You may also need to open up port 443 on AWS.
 
-Note that once you install HTTPS, running a full `ansible-playbook` will undo the changes!
+**Note that once you install HTTPS, running a full `ansible-playbook` will undo the changes!**
 You can modify the `nginx` include in `tasks/main.yml` to prevent this.
 
 
