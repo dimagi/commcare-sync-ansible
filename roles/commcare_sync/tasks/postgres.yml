@@ -76,6 +76,7 @@
     encrypted: yes
     priv: ALL
     state: present
+  tags: postgres
 
 - name: Ensure the default user does not have unnecessary privileges.
   become: yes
