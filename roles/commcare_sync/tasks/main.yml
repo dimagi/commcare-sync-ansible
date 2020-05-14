@@ -101,6 +101,12 @@
   tags: postgres
 
 
+# Redis
+
+- include_tasks: redis.yml
+  tags: redis
+
+
 # Django
 
 - include_tasks: django.yml
