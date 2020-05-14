@@ -43,17 +43,6 @@ mapbox_token: "{{ vault_mapbox_token }}"
 
 app_environment:
   DJANGO_SETTINGS_MODULE: "{{ django_settings_module }}"
-  LOG_DIR: "{{ log_dir }}"
-  STATIC_DIR: "{{ static_dir }}"
-  MEDIA_DIR: "{{ media_dir }}"
-  DEFAULT_DATABASE_NAME: "{{ default_db_name }}"
-  DEFAULT_DATABASE_USER: "{{ default_db_user }}"
-  DEFAULT_DATABASE_PASSWORD: "{{ default_db_password }}"
-  DEFAULT_DATABASE_HOST: "{{ default_db_host }}"
-  DEFAULT_DATABASE_PORT: "{{ default_db_port }}"
-  SENTRY_DSN: "{{ sentry_dsn }}"
-  MAPBOX_TOKEN: "{{ mapbox_token }}"
-  GOOGLE_ANALYTICS_ID: "{{ google_analytics_id }}"
 
 gunicorn_num_workers: 3
 gunicorn_max_requests: 0
