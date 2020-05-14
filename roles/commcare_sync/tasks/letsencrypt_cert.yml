@@ -1,0 +1,24 @@
+---
+# this task just installs certbot, but you still have to manually run it.
+# also after it is run the nginx task will uninstall it.
+
+- name: Add certbot apt repo
+  apt_repository: repo='ppa:certbot/certbot' state=present
+  register: add_cert_repo
+  tags: letsencrypt
+
+- name: Update package list
+  apt: update_cache=yes
+  when: add_cert_repo is changed
+  tags: letsencrypt
+
+- name: Install Certbot
+  apt:
+    name:
+      - software-properties-common
+      - certbot
+      - python-certbot-nginx
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: letsencrypt
+
+...
