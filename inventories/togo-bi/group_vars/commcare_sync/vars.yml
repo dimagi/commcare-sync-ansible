@@ -1,0 +1,8 @@
+---
+
+public_host: commcare-sync-togo.dimagi.com
+
+app_user: "{{ ansible_user }}"
+django_settings_module: "{{ app_name }}.local"
+
+...
