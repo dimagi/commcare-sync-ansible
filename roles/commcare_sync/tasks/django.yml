@@ -130,6 +130,7 @@
     group: "{{ app_group }}"
     mode: 0750
     backup: yes
+  tags: supervisor
 
 - name: Create the Celery default start script.
   template:
@@ -139,24 +140,28 @@
     group: "{{ app_group }}"
     mode: 0750
     backup: yes
+  tags: supervisor
 
 - name: Ensure the Supervisor service is running.
   service:
     name: supervisor
     state: started
     enabled: yes
+  tags: supervisor
 
 - name: Create the Gunicorn Supervisor config file.
   template:
     src: django/gunicorn_supervisor_config.j2
     dest: /etc/supervisor/conf.d/{{ app_name }}.conf
     backup: yes
+  tags: supervisor
 
-#- name: Create the Celery default Supervisor config file.
-#  template:
-#    src: django/celery_default_supervisor_config.j2
-#    dest: /etc/supervisor/conf.d/{{ app_name }}_celery_default.conf
-#    backup: yes
+- name: Create the Celery default Supervisor config file.
+  template:
+    src: django/celery_default_supervisor_config.j2
+    dest: /etc/supervisor/conf.d/{{ app_name }}_celery_default.conf
+    backup: yes
+  tags: supervisor
 
 - name: Create Supervisor log files.
   copy:
@@ -170,6 +175,7 @@
     - celery.log
     - gunicorn.log
     - django.log
+  tags: supervisor
 
 - name: Re-read the Supervisor config files.
   supervisorctl:
@@ -177,7 +183,8 @@
     state: present
   with_items:
     - "{{ app_name }}"
-#    - "{{ app_name }}_celery_default"
+    - "{{ app_name }}_celery_default"
+  tags: supervisor
 
 - name: Restart the Supervisor config files.
   supervisorctl:
@@ -185,7 +192,9 @@
     state: restarted
   with_items:
     - "{{ app_name }}"
-#    - "{{ app_name }}_celery_default"
-  tags: deploy
+    - "{{ app_name }}_celery_default"
+  tags:
+    - deploy
+    - supervisor
 
 ...
