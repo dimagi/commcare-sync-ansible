@@ -3,7 +3,23 @@
 
 Tools for setting up and deploying [commcare-sync](https://github.com/dimagi/commcare-sync).
 
-## Setup
+This repository uses [Ansible](https://www.ansible.com/) to provide one-click set up of commcare-sync
+on a server.
+
+## What's Installed
+
+| Name          | Description / Reason |
+| ------------- | ----------- |
+| Postgres      | Deafult database |
+| Redis         | Message Broker for Celery |
+| Python 3.8    | Running commcare-sync |
+| Nginx         | Web Server |
+| CommCare Sync | Django process for web application, and Celery process for background and scheduled tasks |
+
+
+The above will all be configured, and after install commcare-sync should be properly set up.
+
+## Getting Started
 
 ### Install Ansible
 
@@ -16,7 +32,10 @@ sudo apt-get update
 sudo apt-get install ansible
 ```
 
-## Develop
+## Development
+
+Development for this tool is set up to run on a Vagrant VM.
+To develop and test, follow the instructions below.
 
 ### Set up Vagrant
 
@@ -142,4 +161,4 @@ To deploy, run the following *from your local machine*.
 ansible-playbook -i inventories/myproject commcare_sync.yml --limit myserver --vault-password-file ~/myproject-ansible-vault -vv --tags=deploy
 ```
 
-You can also use the fabric example in the [app repository](https://github.com/dimagi/commcare-sync) to deploy.
+You can also modify the fabric example in the [app repository](https://github.com/dimagi/commcare-sync) to deploy.
