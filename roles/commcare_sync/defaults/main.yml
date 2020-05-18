@@ -27,7 +27,7 @@ media_dir: "{{ src_dir }}/media"
 
 # superset defaults
 superset_enabled: yes
-superset_db_name: "superset_tmp"
+superset_db_name: "superset"
 superset_project_dir: "{{ base_dir }}/superset"
 superset_virtualenv_dir: "{{ base_dir }}/.virtualenvs/superset"
 
