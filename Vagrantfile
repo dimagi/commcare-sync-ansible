@@ -31,7 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     obj.vm.provider :virtualbox do |vb|
       # vb.gui = true
       vb.customize ["modifyvm", :id, "--cpus", "2"]
-      vb.customize ["modifyvm", :id, "--memory", "2048"]
+      vb.customize ["modifyvm", :id, "--memory", "4096"]
     end
 
     # Ansible provisioner.
@@ -42,7 +42,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.host_key_checking = false
       ansible.verbose = "vvv"
       # ansible.vault_password_file = "~/ansible-vault"  # to test vault config
-      # ansible.tags = "deploy"  # to only test/run specific tags
+      # ansible.tags = "superset"  # to only test/run specific tags
     end
 
   end
