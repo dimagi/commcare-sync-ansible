@@ -94,7 +94,7 @@ openssl rand -base64 2048 > ~/myproject-ansible-vault
 
 #### Create Vault Vars File
 ```bash
-ansible-vault create --vault-password-file ~/myproject-ansible-vault ./inventories/myproject/group_vars/api/vault.yml
+ansible-vault create --vault-password-file ~/myproject-ansible-vault ./inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
 
 Add your secrets here. E.g.
@@ -136,7 +136,7 @@ ssh -i ~/myproject.pem ubuntu@my.server.ip
 #### Run Installation
 
 ```bash
-ansible-playbook -i inventories/myproject commcare_sync.yml --limit myserver --vault-password-file ~/myproject-ansible-vault -vv
+ansible-playbook -i inventories/myproject commcare_sync.yml --vault-password-file ~/myproject-ansible-vault -vv
 ```
 
 This should install everything required to run CommCare Sync!
