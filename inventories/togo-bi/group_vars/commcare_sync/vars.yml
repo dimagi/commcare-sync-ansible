@@ -1,6 +1,8 @@
 ---
 
 public_host: commcare-sync-togo.dimagi.com
+superset_public_host: superset-togo.dimagi.com
+superset_enabled: yes
 
 app_user: "{{ ansible_user }}"
 django_settings_module: "{{ app_name }}.local"
