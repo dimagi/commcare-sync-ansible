@@ -9,6 +9,7 @@ swap_file_enabled: no
 swap_file: /swapfile
 swap_file_size_kb: 512
 
+ssl_enabled: no
 app_name: commcare_sync
 app_user: "{{ app_name }}"
 home_dir: /home/{{ app_user }}

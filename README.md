@@ -153,8 +153,9 @@ You'll need to repeat this process for each site (e.g. commcare-sync and superse
 You may also need to open up port 443 on AWS.
 
 **Note that once you install HTTPS, running a full `ansible-playbook` will undo the changes!**
-You can modify the `nginx` include in `tasks/main.yml` to prevent this.
 
+You can set `ssl_enabled=yes` and `superset_ssl_enabled=yes` to prevent this from happening
+after enabling SSL support.
 
 ### Steady-State Deploy
 

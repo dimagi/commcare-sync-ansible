@@ -29,6 +29,7 @@
     src: nginx/gunicorn_nginx_without_ssl_config.j2
     dest: /etc/nginx/sites-available/{{ project_name }}.conf
     backup: yes
+  when: "{{ not ssl_enabled }}"
   tags: nginx
 
 - name: Enable {{ app_name }} nginx config.
@@ -36,6 +37,7 @@
     src: /etc/nginx/sites-available/{{ project_name }}.conf
     dest: /etc/nginx/sites-enabled/{{ project_name }}.conf
     state: link
+  when: "{{ not ssl_enabled }}"
   tags: nginx
 
 - name: Disable default nginx config.
