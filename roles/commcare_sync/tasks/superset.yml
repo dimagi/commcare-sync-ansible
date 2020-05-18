@@ -163,3 +163,7 @@
   tags:
     - superset
     - nginx
+
+- name: Test & reload nginx config.
+  shell: nginx -t && nginx -s reload
+  tags: nginx
