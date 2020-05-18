@@ -116,12 +116,6 @@
     - supervisor
 
 
-# Superset
-
-- include_tasks: superset.yml
-  tags:
-    - superset
-
 # NGINX
 
 - include_tasks: nginx.yml
@@ -131,5 +125,11 @@
 - include_tasks: letsencrypt_cert.yml
   tags: letsencrypt
   when: env != 'dev'
+
+# Superset
+
+- include_tasks: superset.yml
+  tags:
+    - superset
 
 ...

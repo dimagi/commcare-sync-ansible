@@ -1,6 +1,8 @@
 ---
 
 public_host: 192.168.11.10
+superset_public_host: superset.vagrant.local  # this needs to be manually mapped to 192.168.11.10 in /etc/hosts
+
 
 app_user: "{{ ansible_user }}"
 django_settings_module: "{{ app_name }}.local"

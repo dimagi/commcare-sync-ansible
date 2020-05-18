@@ -14,8 +14,9 @@ gunicorn \
       -w 10 \
       -k gevent \
       --timeout 120 \
-      -b  localhost:8088 \
       --limit-request-line 0 \
       --limit-request-field_size 0 \
       --statsd-host localhost:8125 \
+      --bind unix:{{ run_dir }}/superset.sock \
       "superset.app:create_app()"
+

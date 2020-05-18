@@ -144,3 +144,22 @@
   with_items:
     - superset
   tags: superset
+
+
+- name: Create superset nginx config.
+  template:
+    src: nginx/superset_nginx_without_ssl_config.j2
+    dest: /etc/nginx/sites-available/superset.conf
+    backup: yes
+  tags:
+    - superset
+    - nginx
+
+- name: Enable superset nginx config.
+  file:
+    src: /etc/nginx/sites-available/superset.conf
+    dest: /etc/nginx/sites-enabled/superset.conf
+    state: link
+  tags:
+    - superset
+    - nginx
