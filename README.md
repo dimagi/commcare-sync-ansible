@@ -149,6 +149,7 @@ HTTPS set up is currently not supported by this tool. To set up SSL, login to yo
 sudo certbot --nginx
 ```
 
+You'll need to repeat this process for each site (e.g. commcare-sync and superset).
 You may also need to open up port 443 on AWS.
 
 **Note that once you install HTTPS, running a full `ansible-playbook` will undo the changes!**
