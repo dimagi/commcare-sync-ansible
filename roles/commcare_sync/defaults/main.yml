@@ -25,6 +25,11 @@ log_dir: "{{ base_dir }}/log"
 static_dir: "{{ src_dir }}/static_root"
 media_dir: "{{ src_dir }}/media"
 
+# superset defaults
+superset_db_name: "superset_tmp"
+superset_project_dir: "{{ base_dir }}/superset"
+superset_virtualenv_dir: "{{ base_dir }}/.virtualenvs/superset"
+
 postgresql_version: 10
 postgresql_user: postgres
 
@@ -39,10 +44,13 @@ django_migrate: true
 django_collectstatic: true
 
 sentry_dsn: "{{ vault_sentry_dsn }}"
-mapbox_token: "{{ vault_mapbox_token }}"
+mapbox_api_key: "{{ vault_mapbox_api_key }}"
 
 app_environment:
   DJANGO_SETTINGS_MODULE: "{{ django_settings_module }}"
+
+superset_environment:
+  SQLALCHEMY_DATABASE_URI: 'postgresql://{{ default_db_user }}:{{ default_db_password }}@{{ default_db_host }}:{{ default_db_port }}/{{ superset_db_name }}'
 
 gunicorn_num_workers: 3
 gunicorn_max_requests: 0

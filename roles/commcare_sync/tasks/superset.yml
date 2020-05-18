@@ -1,0 +1,146 @@
+# Database
+
+- name: Ensure the superset  database is created.
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  postgresql_db:
+    name: "{{ superset_db_name }}"
+    encoding: 'UTF-8'
+    lc_collate: 'en_US.UTF-8'
+    lc_ctype: 'en_US.UTF-8'
+    template: 'template1'
+    state: present
+  tags: superset
+
+- name: Ensure the default user has access to the database.
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  postgresql_user:
+    db: "{{ superset_db_name }}"
+    name: "{{ default_db_user }}"
+    password: "{{ default_db_password }}"
+    encrypted: yes
+    priv: ALL
+    state: present
+  tags: superset
+
+
+# Virtualenv
+
+- name: Create the superset virtualenv.
+  command: virtualenv -p {{ virtualenv_python_version }} {{ superset_virtualenv_dir }}
+  args:
+    creates: "{{ superset_virtualenv_dir }}/bin/activate"
+  tags: superset
+
+- name: Change ownership of superset virtualenv.
+  file:
+    dest: "{{ superset_virtualenv_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    recurse: yes
+  tags: superset
+
+- name: Create the virtualenv postactivate script to set environment variables.
+  template:
+    src: superset/superset_postactivate_script.sh.j2
+    dest: "{{ superset_virtualenv_dir }}/bin/postactivate"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    backup: yes
+  tags: superset
+
+- name: Install packages required by Superset in the virtualenv.
+  pip:
+    virtualenv: "{{ superset_virtualenv_dir }}"
+    name:
+      - apache-superset
+      - psycopg2-binary
+      - email_validator
+      - gunicorn
+      - gevent
+  tags: superset
+
+# Create config directory and files
+
+- name: Create {{ superset_project_dir }}.
+  file:
+    path: "{{ superset_project_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    state: directory
+  tags: superset
+
+- name: Create the superset_config.py file
+  template:
+    src: superset/superset_config.py.j2
+    dest: "{{ superset_project_dir }}/superset_config.py"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0640
+    backup: yes
+  tags: superset
+
+
+- name: Run Superset database migrations.
+  become: yes
+  become_user: "{{ app_user }}"
+  environment: "{{ superset_environment }}"
+  shell: "{{ superset_virtualenv_dir }}/bin/superset db upgrade"
+  tags: superset
+
+- name: Run Superset initialization.
+  become: yes
+  become_user: "{{ app_user }}"
+  environment: "{{ superset_environment }}"
+  shell: "{{ superset_virtualenv_dir }}/bin/superset init"
+  tags: superset
+
+# Supervisor files
+
+- name: Create the Supervisor start script.
+  template:
+    src: superset/superset_start_script.j2
+    dest: "{{ superset_virtualenv_dir }}/bin/superset_start"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0750
+    backup: yes
+  tags: superset
+
+- name: Create the Superset Supervisor config file.
+  template:
+    src: superset/superset_supervisor_config.j2
+    dest: /etc/supervisor/conf.d/superset.conf
+    backup: yes
+  tags: superset
+
+- name: Create Supervisor log files.
+  copy:
+    content: ""
+    dest: "{{ log_dir }}/{{ item }}"
+    force: no
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: 0644
+  with_items:
+    - supervisor.log
+  tags: superset
+
+- name: Re-read the Supervisor config files.
+  supervisorctl:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - superset
+  tags: superset
+
+- name: Restart the Supervisor config files.
+  supervisorctl:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - superset
+  tags: superset

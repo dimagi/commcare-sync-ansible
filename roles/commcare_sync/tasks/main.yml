@@ -116,6 +116,12 @@
     - supervisor
 
 
+# Superset
+
+- include_tasks: superset.yml
+  tags:
+    - superset
+
 # NGINX
 
 - include_tasks: nginx.yml

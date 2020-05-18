@@ -7,5 +7,5 @@ django_settings_module: "{{ app_name }}.local"
 
 # These variables are normally encrypted and stored in an ansible vault.
 vault_default_db_password: commcarehq
-
+vault_mapbox_api_key: fixme
 ...
