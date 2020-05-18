@@ -91,6 +91,16 @@
   shell: "{{ superset_virtualenv_dir }}/bin/superset db upgrade"
   tags: superset
 
+- name: Create a Superset admin user
+  become: yes
+  become_user: "{{ app_user }}"
+  shell: "{{ superset_virtualenv_dir }}/bin/flask fab create-admin --username {{ superset_username }} --firstname {{ superset_firstname }} \
+            --lastname {{ superset_lastname }}  --email {{ superset_email }} --password '{{ superset_password }}'"
+  environment: "{{ superset_environment }}"
+  tags:
+   - superset
+   - superset-admin
+
 - name: Run Superset initialization.
   become: yes
   become_user: "{{ app_user }}"
@@ -129,7 +139,7 @@
     - supervisor.log
   tags: superset
 
-- name: Re-read the Supervisor config files.
+- name: Re-read the Superset supervisor config files.
   supervisorctl:
     name: "{{ item }}"
     state: present
@@ -137,7 +147,7 @@
     - superset
   tags: superset
 
-- name: Restart the Supervisor config files.
+- name: Restart the Superset Supervisor process.
   supervisorctl:
     name: "{{ item }}"
     state: restarted
@@ -151,6 +161,7 @@
     src: nginx/superset_nginx_without_ssl_config.j2
     dest: /etc/nginx/sites-available/superset.conf
     backup: yes
+  when: "{{ not superset_ssl_enabled }}"
   tags:
     - superset
     - nginx
@@ -160,10 +171,13 @@
     src: /etc/nginx/sites-available/superset.conf
     dest: /etc/nginx/sites-enabled/superset.conf
     state: link
+  when: "{{ not superset_ssl_enabled }}"
   tags:
     - superset
     - nginx
 
 - name: Test & reload nginx config.
   shell: nginx -t && nginx -s reload
-  tags: nginx
+  tags:
+    - superset
+    - nginx
