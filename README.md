@@ -15,6 +15,7 @@ on a server.
 | Nginx         | Web Server |
 | Supervisord   | Process manager |
 | CommCare Sync | Django process for web application, and Celery process for background and scheduled tasks |
+| Superset      | BI Tool |
 
 
 The above will all be configured, and after install commcare-sync should be properly set up.
@@ -103,7 +104,7 @@ vault_default_db_password: SuperSecret
 You run the following to edit the file later:
 
 ```bash
-ansible-vault edit --vault-password-file ~/myproject-ansible-vault ./inventories/myproject/group_vars/api/vault.yml
+ansible-vault edit --vault-password-file ~/myproject-ansible-vault ./inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
 
 #### SSH access
