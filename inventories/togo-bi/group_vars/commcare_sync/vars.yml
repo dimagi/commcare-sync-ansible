@@ -10,4 +10,7 @@ superset_ssl_enabled: yes
 app_user: "{{ ansible_user }}"
 django_settings_module: "{{ app_name }}.local"
 
+project_timezone: "Etc/GMT"
+commcare_sync_export_periodicity: 7200  # 60 * 60 * 2 = every 2 hours
+
 ...

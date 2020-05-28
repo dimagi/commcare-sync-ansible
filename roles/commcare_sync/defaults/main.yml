@@ -26,6 +26,9 @@ log_dir: "{{ base_dir }}/log"
 static_dir: "{{ src_dir }}/static_root"
 media_dir: "{{ src_dir }}/media"
 
+commcare_sync_export_periodicity: 43200  # 60 * 60 * 12 = every 12 hours
+project_timezone: 'America/New_York'
+
 # superset defaults
 superset_enabled: yes
 superset_ssl_enabled: no
