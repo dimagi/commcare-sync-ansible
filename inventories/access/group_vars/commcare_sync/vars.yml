@@ -13,4 +13,7 @@ django_settings_module: "{{ app_name }}.local"
 project_timezone: "Etc/GMT+3"
 commcare_sync_export_periodicity: 28800  # 60 * 60 * 8 = every 8 hours
 
+apt_update_cache: no
+virtualenv_python_version: python3.7
+postgresql_version: 11
 ...
