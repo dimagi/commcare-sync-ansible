@@ -3,14 +3,15 @@
 # also after it is run the nginx task will uninstall it.
 
 - name: Add certbot apt repo
-  apt_repository: repo='ppa:certbot/certbot' state=present
+  apt_repository:
+    repo: ppa:certbot/certbot
+    update_cache: "{{ apt_update_cache }}"
+    state: present
   register: add_cert_repo
+  when: ssl_enabled or superset_ssl_enabled
   tags: letsencrypt
 
-- name: Update package list
-  apt: update_cache=yes
-  when: add_cert_repo is changed
-  tags: letsencrypt
+
 
 - name: Install Certbot
   apt:
@@ -19,6 +20,7 @@
       - certbot
       - python-certbot-nginx
   ignore_errors: '{{ ansible_check_mode }}'
+  when: ssl_enabled or superset_ssl_enabled
   tags: letsencrypt
 
 ...
