@@ -2,9 +2,9 @@
 
 public_host: access-commcare-sync.dimagi.com
 superset_public_host: access-superset.dimagi.com
-ssl_enabled: no
+ssl_enabled: yes
 superset_enabled: yes
-superset_ssl_enabled: no
+superset_ssl_enabled: yes
 
 
 app_user: "{{ ansible_user }}"
