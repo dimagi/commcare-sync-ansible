@@ -12,8 +12,8 @@ DATABASES = {
 }
 
 
-ACCOUNT_ADAPTER = 'apps.users.account_adapter.EmailAsUsernameAdapter'
-# ACCOUNT_ADAPTER = 'apps.users.account_adapter.NoNewUsersAccountAdapter'
+# ACCOUNT_ADAPTER = 'apps.users.account_adapter.EmailAsUsernameAdapter'
+ACCOUNT_ADAPTER = 'apps.users.account_adapter.NoNewUsersAccountAdapter'
 
 ALLOWED_HOSTS = [
     '{{ public_host }}',
