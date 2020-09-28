@@ -44,7 +44,7 @@ To develop and test, follow the instructions below.
 
 ### Set up Vagrant
 
-[Foollow this guide](https://www.vagrantup.com/docs/installation/)
+[Follow this guide](https://www.vagrantup.com/docs/installation/)
 
 ### Deploy to local VM
 
