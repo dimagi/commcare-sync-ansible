@@ -161,7 +161,7 @@
     src: nginx/superset_nginx_without_ssl_config.j2
     dest: /etc/nginx/sites-available/superset.conf
     backup: yes
-  when: "{{ not superset_ssl_enabled }}"
+  when: "not superset_ssl_enabled"
   tags:
     - superset
     - nginx
@@ -171,7 +171,7 @@
     src: /etc/nginx/sites-available/superset.conf
     dest: /etc/nginx/sites-enabled/superset.conf
     state: link
-  when: "{{ not superset_ssl_enabled }}"
+  when: "not superset_ssl_enabled"
   tags:
     - superset
     - nginx
