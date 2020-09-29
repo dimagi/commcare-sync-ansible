@@ -43,7 +43,7 @@ superset_password: "{{ vault_default_superset_password }}"
 
 postgresql_version: 10
 postgresql_user: postgres
-postgresql_allow_remote_connections: yes
+postgresql_allow_remote_connections: no
 
 default_db_name: "{{ app_name }}"
 default_db_user: "{{ app_name }}"
