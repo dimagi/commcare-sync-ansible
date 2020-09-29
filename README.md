@@ -103,6 +103,7 @@ Add your secrets here. E.g.
 # My Project Vault File
 
 vault_default_db_password: SuperSecret
+vault_django_secret_key: als0_SEcr3t
 ```
 
 You run the following to edit the file later:
