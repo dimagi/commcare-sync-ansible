@@ -106,6 +106,15 @@ vault_default_db_password: SuperSecret
 vault_django_secret_key: als0_SEcr3t
 ```
 
+(You can generate a good random key from a command line:)
+```
+$ python3 -c 'import string
+import secrets
+chars = string.ascii_letters + string.digits
+key = "".join(secrets.choice(chars) for x in range(64))
+print(key)'
+```
+
 You run the following to edit the file later:
 
 ```bash
