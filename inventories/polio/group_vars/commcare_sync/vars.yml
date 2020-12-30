@@ -1,0 +1,10 @@
+---
+
+public_host: polio-commcare-sync.dimagi.com
+superset_public_host: polio-superset.dimagi.com  # this needs to be manually mapped to 192.168.11.10 in /etc/hosts
+superset_enabled: yes
+
+app_user: "{{ ansible_user }}"
+django_settings_module: "{{ app_name }}.local"
+
+...
