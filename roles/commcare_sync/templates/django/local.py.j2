@@ -1,5 +1,9 @@
 from .settings import *
 
+{% if django_secret_key %}
+SECRET_KEY = '{{ django_secret_key }}'
+{% endif %}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',

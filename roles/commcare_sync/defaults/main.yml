@@ -52,6 +52,7 @@ default_db_host: 127.0.0.1
 default_db_port: 5432
 
 django_settings_module: "{{ app_name }}.settings"
+django_secret_key: "{{ vault_django_secret_key }}"
 django_migrate: true
 django_collectstatic: true
 
