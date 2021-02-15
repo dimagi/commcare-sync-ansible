@@ -1,0 +1,3 @@
+[submodule "inventories/dimagi"]
+	path = inventories/dimagi
+	url = git@github.com:dimagi/commcare-sync-inventories.git
