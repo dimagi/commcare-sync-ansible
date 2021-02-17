@@ -7,8 +7,9 @@
     name: nginx
     update_cache: "{{ apt_update_cache }}"
     state: present
-  tags: packages
-  tags: nginx
+  tags:
+    - packages
+    - nginx
 
 - name: Start NGINX.
   service:
