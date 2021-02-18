@@ -12,6 +12,7 @@ commcare-sync application a server.
    :caption: Contents:
 
    whats-installed
+   getting-started
 
 Indices and tables
 ==================
