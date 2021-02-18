@@ -2,3 +2,4 @@
 .vagrant
 *.pyc
 *~
+docs/_build/
