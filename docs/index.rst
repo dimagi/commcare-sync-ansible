@@ -13,6 +13,7 @@ commcare-sync application a server.
 
    whats-installed
    getting-started
+   production
 
 Indices and tables
 ==================
