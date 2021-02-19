@@ -118,16 +118,25 @@ This should install everything required to run CommCare Sync!
 
 #### Settting up HTTPS
 
-HTTPS set up is currently not supported by this tool. To set up SSL, login to your machine and run:
+HTTPS set up is currently not supported by this tool. To set up SSL, login to your machine and install certbot:
+
+```
+sudo apt install certbot python3-certbot-nginx
+```
+
+Then run:
 
 ```
 sudo certbot --nginx
 ```
 
-You'll need to repeat this process for each site (e.g. commcare-sync and superset).
-You may also need to open up port 443 on AWS.
+and follow the prompts.
 
-**Note that once you install HTTPS, running a full `ansible-playbook` will undo the changes!**
+You'll need to repeat this process for each site (e.g. commcare-sync and superset).
+You may also need to open up port 443 on AWS or your firewall.
+
+**After setting up HTTPS you should set `ssl_enabled=yes` and `superset_ssl_enabled=yes` in your `vars.yml` file,
+otherwise running a full `ansible-playbook` will undo the changes!**
 
 You can set `ssl_enabled=yes` and `superset_ssl_enabled=yes` to prevent this from happening
 after enabling SSL support.
