@@ -1,6 +1,11 @@
 Production Environments
 =======================
 
+This page describes creating and managing production inventory files.
+For details on deploying a production environment, see the [deployment page](/deployment).
+
+### Directory overview
+
 Production environments live in the `inventories/` folder.
 
 To add a new production environment you can follow the steps below, replacing `myproject` with your project name.
