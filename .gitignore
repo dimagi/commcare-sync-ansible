@@ -2,3 +2,5 @@
 .vagrant
 *.pyc
 *~
+docs/_build/
+docs/warn.txt
