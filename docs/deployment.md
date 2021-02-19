@@ -27,3 +27,26 @@ sudo adduser ansible
 git clone https://github.com/dimagi/commcare-sync-ansible.git
 ```
 
+### Run the scripts
+
+Follow the steps in the "Run Installation" section of the [production instructions](/production/). 
+
+### Other tasks
+
+Some other things you might want to do on production.
+
+#### Setting up passwordless SSH
+
+Create `.ssh` directory in the user's home and make sure to set the permissions to 755.
+
+```bash
+mkdir ~/.ssh
+chmod 755 ~/.ssh
+```
+
+Add an `authorized_keys` file and make sure to set permissions to 700.
+
+```bash
+touch ~/.ssh/authorized_keys
+chmod 700 ~/.ssh/authorized_keys
+```
