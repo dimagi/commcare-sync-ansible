@@ -10,15 +10,10 @@ Production environments live in the `inventories/` folder.
 
 To add a new production environment you can follow the steps below, replacing `myproject` with your project name.
 
-Dimagi-managed production environments are maintained in the private `inventories/dimagi/` submodule.
-These inventories can be accessed by running `git submodule update --init` after cloning the repository.
-This requires access to the [`commcare-inventories` repository on Github](https://github.com/dimagi/commcare-sync-inventories/).
 
-To work on a Dimagi-managed production environment, all instructions below are the same,
-but the root path everywhere must be changed from `inventories/` to `inventories/dimagi/`.
-Additionally, changes will need to be pushed to the separate
-[`commcare-inventories` private repository](https://github.com/dimagi/commcare-sync-inventories/),
-and then committed to the main repository by updating the submodule reference.
+Dimagi-managed production environments are maintained in the private `inventories/dimagi/` submodule.
+Dimagi developers should see [the dimagi page](/dimagi) for details on working with this submodule
+in Dimagi-managed environments.
 
 ### Initialize Inventory Folder
 
