@@ -26,16 +26,26 @@ First create a new inventory folder for your environment.
 This is where your project-specific configuration will live. 
 
 ```bash
-cp inventories/dev inventories/myproject
+cp -r inventories/example inventories/myproject
 ```
 ### Update Inventory Files
 
 Edit the `hosts.yml` and `vars.yml` files with your project-specific changes.
 
+
 ### Ansible Vault
 
 Production environments should use [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html) to manage secrets.
 That page has lots of details about editing and using files with Vault.
+
+The example environment includes a vault file which you can edit using:
+
+```python
+ansible-vault edit ./inventories/example/group_vars/commcare_sync/vault.yml
+```
+
+And entering the password `secret`.
+You should remove this file and create a new one for your environment following the instructions below.
 
 ### Initial Vault Setup
 
