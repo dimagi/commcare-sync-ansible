@@ -50,3 +50,14 @@ Add an `authorized_keys` file and make sure to set permissions to 700.
 touch ~/.ssh/authorized_keys
 chmod 700 ~/.ssh/authorized_keys
 ```
+
+
+#### Working with Superset
+
+In order to run any superset native commands (for example `superset db upgrade`)
+you must enter the superset environment and *manually run the postactivate script*.
+
+```python
+source ~/www/.virtualenvs/superset/bin/activate
+source ~/www/.virtualenvs/superset/bin/postactivate
+```
