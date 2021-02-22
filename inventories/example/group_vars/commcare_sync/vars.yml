@@ -1,0 +1,11 @@
+---
+
+public_host: commcare-sync.example.com
+superset_public_host: superset.example.com
+superset_enabled: yes
+
+app_user: "{{ ansible_user }}"
+django_settings_module: "{{ app_name }}.local"
+
+# vault_ variables are stored in vault.yml file (pw: "secret")
+...

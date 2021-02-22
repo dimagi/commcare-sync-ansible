@@ -1,19 +1,19 @@
 Production Environments
 =======================
 
+This page describes creating and managing production inventory files.
+For details on deploying a production environment, see the [deployment page](/deployment).
+
+### Directory overview
+
 Production environments live in the `inventories/` folder.
 
 To add a new production environment you can follow the steps below, replacing `myproject` with your project name.
 
-Dimagi-managed production environments are maintained in the private `inventories/dimagi/` submodule.
-These inventories can be accessed by running `git submodule update --init` after cloning the repository.
-This requires access to the [`commcare-inventories` repository on Github](https://github.com/dimagi/commcare-sync-inventories/).
 
-To work on a Dimagi-managed production environment, all instructions below are the same,
-but the root path everywhere must be changed from `inventories/` to `inventories/dimagi/`.
-Additionally, changes will need to be pushed to the separate
-[`commcare-inventories` private repository](https://github.com/dimagi/commcare-sync-inventories/),
-and then committed to the main repository by updating the submodule reference.
+Dimagi-managed production environments are maintained in the private `inventories/dimagi/` submodule.
+Dimagi developers should see [the dimagi page](/dimagi) for details on working with this submodule
+in Dimagi-managed environments.
 
 ### Initialize Inventory Folder
 
@@ -21,16 +21,26 @@ First create a new inventory folder for your environment.
 This is where your project-specific configuration will live. 
 
 ```bash
-cp inventories/dev inventories/myproject
+cp -r inventories/example inventories/myproject
 ```
 ### Update Inventory Files
 
 Edit the `hosts.yml` and `vars.yml` files with your project-specific changes.
 
+
 ### Ansible Vault
 
 Production environments should use [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html) to manage secrets.
 That page has lots of details about editing and using files with Vault.
+
+The example environment includes a vault file which you can edit using:
+
+```python
+ansible-vault edit ./inventories/example/group_vars/commcare_sync/vault.yml
+```
+
+And entering the password `secret`.
+You should remove this file and create a new one for your environment following the instructions below.
 
 ### Initial Vault Setup
 
@@ -103,16 +113,25 @@ This should install everything required to run CommCare Sync!
 
 #### Settting up HTTPS
 
-HTTPS set up is currently not supported by this tool. To set up SSL, login to your machine and run:
+HTTPS set up is currently not supported by this tool. To set up SSL, login to your machine and install certbot:
+
+```
+sudo apt install certbot python3-certbot-nginx
+```
+
+Then run:
 
 ```
 sudo certbot --nginx
 ```
 
-You'll need to repeat this process for each site (e.g. commcare-sync and superset).
-You may also need to open up port 443 on AWS.
+and follow the prompts.
 
-**Note that once you install HTTPS, running a full `ansible-playbook` will undo the changes!**
+You'll need to repeat this process for each site (e.g. commcare-sync and superset).
+You may also need to open up port 443 on AWS or your firewall.
+
+**After setting up HTTPS you should set `ssl_enabled=yes` and `superset_ssl_enabled=yes` in your `vars.yml` file,
+otherwise running a full `ansible-playbook` will undo the changes!**
 
 You can set `ssl_enabled=yes` and `superset_ssl_enabled=yes` to prevent this from happening
 after enabling SSL support.
