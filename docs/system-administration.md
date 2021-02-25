@@ -1,24 +1,24 @@
 System Administration
 =====================
 
-# Philosophy
+## Philosophy
 
 CommCare Sync deployments use an "[infrastructure as code](https://en.wikipedia.org/wiki/Infrastructure_as_code)"
 philosophy which means all configuration is documented in code files.
 See the sections below to access everything needed to configure the system.
 
-# Services
+## Services
 
 The complete list of services 
 [is available in the roles/commcare_sync/tasks/main.yml](https://github.com/dimagi/commcare-sync-ansible/blob/master/roles/commcare_sync/tasks/main.yml) file.
 
 The most important ones are summarized on the [what's installed page](/whats-installed/).
 
-# Common Tasks
+## Common Tasks
 
 Some of the common tasks needed to manage an environment.
 
-## Enabling/Disabling Public Sign Ups
+### Enabling/Disabling Public Sign Ups
 
 Sign ups are currently configured via the Django `ACCOUNT_ADAPTER` setting.
 To enable anyone to sign up, you should set it to `EmailAsUsernameAdapter`.
@@ -27,7 +27,7 @@ This behavior is controlled by the `django_allow_public_signups` Ansible variabl
 
 If public sign ups are disabled, then only superusers can create new accounts, via the Django admin UI or command line.
 
-## Deploying Changes
+### Deploying Changes
 
 You may wish to deploy updates to the server, for example to pull the latest changes from the CommCare Sync code.
 
@@ -41,7 +41,7 @@ Changes can also be deployed from the [CommCare Sync codebase](https://github.co
 itself by following the [instructions in the README](https://github.com/dimagi/commcare-sync#deployment).
 
 
-## Accessing the Virtual Environment
+### Accessing the Virtual Environment
 
 To access the virtual environments for commcare sync and superset, run the following commands:
 
@@ -55,7 +55,7 @@ the superset <venv> is at `~/www/.virtualenvs/superset`.
 
 The second command is required to set the project-specific environment variables to the correct values.
 
-## Other Useful commands
+### Other Useful commands
 
 | Task                              | Command |
 | --------------------------------- | ----------- |
@@ -65,7 +65,7 @@ The second command is required to set the project-specific environment variables
 | Restart Nginx                     | `sudo service nginx restart |
 
 
-## Checking for Stuck Exports
+### Checking for Stuck Exports
 
 The logs for running exports don't show up in the UI until they complete.
 The easiest way to see if an export is still running or if it is stuck/was killed is to
@@ -75,7 +75,7 @@ login to the server and just run a command to see what "commcare-export" process
 ps -ef | grep commcare-export
 ```
 
-# Database Management
+## Database Management
 
 Because CommCare Sync does not provide direct access to the underlying databases,
 it is common to have to perform database management tasks, for example, creating new databases,
