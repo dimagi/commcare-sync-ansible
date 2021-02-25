@@ -16,8 +16,11 @@ DATABASES = {
 }
 
 
-# ACCOUNT_ADAPTER = 'apps.users.account_adapter.EmailAsUsernameAdapter'
+{% if django_allow_public_signups %}
+ACCOUNT_ADAPTER = 'apps.users.account_adapter.EmailAsUsernameAdapter'
+{% else %}
 ACCOUNT_ADAPTER = 'apps.users.account_adapter.NoNewUsersAccountAdapter'
+{% endif %}
 
 ALLOWED_HOSTS = [
     '{{ public_host }}',
