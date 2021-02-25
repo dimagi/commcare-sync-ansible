@@ -7,6 +7,8 @@ superset_enabled: yes
 app_user: "{{ ansible_user }}"
 django_settings_module: "{{ app_name }}.local"
 
+django_allow_public_signups: yes
+
 # These variables are normally encrypted and stored in an ansible vault.
 vault_default_db_password: commcarehq
 vault_default_superset_password: superset
