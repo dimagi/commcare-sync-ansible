@@ -20,10 +20,3 @@ This documentation site also includes a `guide for system administrators </syste
    migration
    system-administration
    dimagi
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
