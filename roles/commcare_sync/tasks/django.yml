@@ -64,6 +64,7 @@
     - "{{ static_dir }}"
     - "{{ media_dir }}"
 
+
 # Django
 
 - name: Install packages required by the Django app inside virtualenv.
