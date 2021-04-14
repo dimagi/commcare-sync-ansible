@@ -1,0 +1,17 @@
+- name: commcare-sync log rolling configurations
+  import_role:
+    name: ansible-logrotate
+  tags: logging
+  vars:
+    logrotate_scripts:
+      - name: commcare-sync-logs
+        path: "{{ log_dir }}/*.log"
+        options:
+          - weekly
+          - size 50M
+          - rotate 8
+          - missingok
+          - compress
+          - delaycompress
+          - copytruncate
+          - notifempty

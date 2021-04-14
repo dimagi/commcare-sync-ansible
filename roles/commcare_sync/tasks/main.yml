@@ -134,4 +134,9 @@
     - superset
     - superset-admin
 
+# logging
+
+- include_tasks: logrotate.yml
+  tags: logging
+
 ...
