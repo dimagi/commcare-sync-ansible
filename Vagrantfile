@@ -37,7 +37,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Ansible provisioner.
     config.vm.provision "ansible" do |ansible|
       ansible.playbook = "commcare_sync.yml"
+      ansible.galaxy_role_file = "requirements.yml"
       ansible.inventory_path = "inventories/dev"
+      ansible.galaxy_roles_path = "~/.ansible/roles"
+      ansible.galaxy_command = "ansible-galaxy install -r %{role_file} --roles-path=%{roles_path}"
       ansible.limit = "local1"
       ansible.host_key_checking = false
       ansible.verbose = "vvv"
