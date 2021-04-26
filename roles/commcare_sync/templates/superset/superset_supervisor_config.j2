@@ -5,3 +5,11 @@ command = {{ superset_virtualenv_dir }}/bin/superset_start
 user = {{ app_user }}
 stdout_logfile = {{ log_dir }}/superset.log
 stderr_logfile = {{ log_dir }}/superset.log
+
+; disabling supervisor default log rotation feature as it renaming 
+; and recreating the log file. Due to which we are running into file permission issues.
+; source-http://supervisord.org/logging.html#activity-log-rotation
+stdout_logfile_maxbytes=0
+stderr_logfile_maxbytes=0
+stdout_logfile_backups=0
+stderr_logfile_backups=0

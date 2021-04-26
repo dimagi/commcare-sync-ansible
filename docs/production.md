@@ -106,6 +106,7 @@ ssh -i ~/myproject.pem ubuntu@my.server.ip
 #### Run Installation
 
 ```bash
+ansible-galaxy install -r requirements.yml
 ansible-playbook -i inventories/myproject commcare_sync.yml --vault-password-file ~/myproject-ansible-vault -vv
 ```
 
