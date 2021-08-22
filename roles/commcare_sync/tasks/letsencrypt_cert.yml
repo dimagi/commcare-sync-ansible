@@ -18,7 +18,7 @@
     name:
       - software-properties-common
       - certbot
-      - python-certbot-nginx
+      - python3-certbot-nginx
   ignore_errors: '{{ ansible_check_mode }}'
   when: ssl_enabled or superset_ssl_enabled
   tags: letsencrypt
