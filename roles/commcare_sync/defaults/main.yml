@@ -66,6 +66,7 @@ app_environment:
 superset_environment:
   SQLALCHEMY_DATABASE_URI: 'postgresql://{{ default_db_user }}:{{ default_db_password }}@{{ default_db_host }}:{{ default_db_port }}/{{ superset_db_name }}'
   FLASK_APP: superset
+  SUPERSET_CONFIG_PATH: '{{ superset_project_dir }}/superset_config.py'
 
 gunicorn_num_workers: 3
 gunicorn_max_requests: 0
