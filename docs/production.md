@@ -11,10 +11,6 @@ Production environments live in the `inventories/` folder.
 To add a new production environment you can follow the steps below, replacing `myproject` with your project name.
 
 
-Dimagi-managed production environments are maintained in the private `inventories/dimagi/` submodule.
-Dimagi developers should see [the dimagi page](/dimagi) for details on working with this submodule
-in Dimagi-managed environments.
-
 ### Initialize Inventory Folder
 
 First create a new inventory folder for your environment.
