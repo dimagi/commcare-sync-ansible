@@ -1,8 +1,8 @@
-Dimagi-managed Enviornments
+Dimagi-managed Environments
 ===========================
 
-Dimagi maintains several production commcare-sync environments.
-This page outlines the recommended workflow for Dimagi developers.
+Dimagi maintains several production commcare-sync environments by making use of a submodule through which the different 
+configurations are managed. This page outlines the details on working with this submodule.
 
 ### Initializing the submodule
 
