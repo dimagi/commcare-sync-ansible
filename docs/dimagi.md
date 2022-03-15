@@ -1,4 +1,4 @@
-Dimagi-managed Enviornments
+Dimagi-managed Environments
 ===========================
 
 Dimagi maintains several production commcare-sync environments by making use of a submodule through which the different 
