@@ -48,7 +48,7 @@ This is where your project-specific configuration will live.
 ```bash
 cp -r inventories/example inventories/myproject
 ```
-### Update Inventory Files
+#### Update Inventory Files
 
 Edit the following files with your project-specific changes:
 * `inventories/myproject/hosts.yml`
@@ -60,7 +60,7 @@ Edit the following files with your project-specific changes:
     * `superset_public_host`: your superset hostname
     * `superset_enabled`: specifies whether Superset should be installed 
 
-### Ansible Vault
+#### Ansible Vault
 
 Production environments should use [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html) to manage secrets.
 That page has lots of details about editing and using files with Vault.
@@ -70,17 +70,17 @@ The example environment includes a vault file which you should remove:
 rm inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
 
-### Initial Vault Setup
+#### Initial Vault Setup
 
 The following one-time setup is used to generate keys / files for Ansible Vault.
 
-#### Generate Vault Key
+_Generate Vault Key_
 
 ```bash
 openssl rand -base64 2048 > ~/myproject-ansible-vault
 ```
 
-#### Create Vault Vars File
+_Create Vault Vars File_
 ```bash
 ansible-vault create --vault-password-file ~/myproject-ansible-vault ./inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
@@ -111,7 +111,7 @@ You run the following to edit the file later:
 ansible-vault edit --vault-password-file ~/myproject-ansible-vault ./inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
 
-### SSH access
+#### SSH access
 
 Assuming you are running on AWS, *Copy the AWS private key to `~/myproject.pem` on your local machine.*
 
@@ -127,7 +127,7 @@ Test it's working:
 ssh -i ~/myproject.pem ubuntu@my.server.ip
 ```
 
-### Set hostname
+#### Set hostname
 
 *On the remote server*
 
@@ -140,7 +140,7 @@ ansible-galaxy install -r requirements.yml
 ansible-playbook -i inventories/myproject commcare_sync.yml --vault-password-file ~/myproject-ansible-vault -vv
 ```
 
-#### Settting up HTTPS
+### Settting up HTTPS
 
 HTTPS set up is currently not supported by this tool. To set up SSL, login to your machine and install certbot:
 
