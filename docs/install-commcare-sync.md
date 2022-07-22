@@ -1,11 +1,19 @@
-Set up CommCare Sync
+Install CommCare Sync for Production
 =====================
 This page outlines the process you need to follow in order to set up a CommCare Sync instance on a production machine.
+
+## Choose a location for the control
+
+While it is possible to run the ansible playbooks from anywhere, 
+it is recommended to run them *on the server you are setting up*.
+This will ensure consistency and also streamline the install process.
+
+These instructions assume a set up where the ansible control and playbooks are run on the server being set up.
 
 ## Install Ansible
 
 From the [Ansible Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu),
-run the following on your local/control machine
+run the following on your control machine.
 
 ```bash
 sudo apt-add-repository ppa:ansible/ansible
@@ -14,15 +22,6 @@ sudo apt-get install ansible
 ```
 
 ## Install CommCare Sync
-
-### Choose a location for the control
-
-While it is possible to run the ansible playbooks from anywhere, 
-it is recommended to run them *on the server you are setting up*.
-This will ensure consistency and also streamline the install process.
-
-These instructions assume a set up where the ansible control and playbooks are run on the server being set up.
-
 ### Set up user accounts
 
 On the server, create an account for the ansible user to use.
