@@ -1,6 +1,6 @@
 Set up CommCare Sync
 =====================
-This page outlines the process you need to follow in order to set up a CommCare Sync instance on a machine.
+This page outlines the process you need to follow in order to set up a CommCare Sync instance on a production machine.
 
 ## Install Ansible
 
