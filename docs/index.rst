@@ -15,7 +15,7 @@ This documentation site also includes a `guide for system administrators </syste
 
    whats-installed
    getting-started
-   install-commcare-sync
+   production
    maintenance
    development
    migration
