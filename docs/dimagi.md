@@ -10,7 +10,7 @@ Dimagi inventories can be accessed by running `git submodule update --init` afte
 This requires access to the [`commcare-inventories` repository on Github](https://github.com/dimagi/commcare-sync-inventories/).
 The config files will be loaded in the `/inventories/dimagi` folder. 
 
-To work on a Dimagi-managed production environment, [all the production instructions are the same](/production/),
+To work on a Dimagi-managed production environment, all the production instructions are the same,
 but the root path everywhere must be changed from `inventories/` to `inventories/dimagi/`.
 Additionally, changes will need to be pushed to the separate
 [`commcare-inventories` private repository](https://github.com/dimagi/commcare-sync-inventories/),

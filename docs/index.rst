@@ -16,7 +16,8 @@ This documentation site also includes a `guide for system administrators </syste
    whats-installed
    getting-started
    production
-   deployment
+   maintenance
+   development
    migration
    system-administration
    dimagi
