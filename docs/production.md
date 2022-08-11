@@ -45,7 +45,8 @@ First create a new inventory folder for your environment (we'll use `myproject` 
 This is where your project-specific configuration will live. 
 
 ```bash
-cp -r inventories/example inventories/myproject
+mkdir -p inventories/myproject
+cp -r inventories/example/* inventories/myproject
 ```
 #### Update Inventory Files
 
