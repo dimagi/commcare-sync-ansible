@@ -27,6 +27,33 @@ This behavior is controlled by the `django_allow_public_signups` Ansible variabl
 
 If public sign ups are disabled, then only superusers can create new accounts, via the Django admin UI or command line.
 
+
+## Create superuser
+Activate virtual environment of commare-sync. If you are not sure where the virtualenv path is, use the following command to find it:
+    `find $HOME -name "*activate" -type f`
+
+example output
+
+`/home/pc/www/.virtualenvs/commcare-sync/bin/postactivate`
+`/home/pc/www/.virtualenvs/commcare-sync/bin/activate`
+`/home/pc/www/.virtualenvs/superset/bin/postactivate`
+`/home/pc/www/.virtualenvs/superset/bin/activate`
+
+To activate use the following command:
+    `source /home/pc/www/.virtualenvs/commcare-sync/bin/activate`
+
+And cd to installation directory: that is `~/www/commcare-sync/code_root/` and Create super user using the following command, and follow the wizard `./manage.py createsuperuser` 
+
+## Add commare server
+
+By default, commcare-sync is preconfigured with commcarehq.org as the default site from which to pull data. If you are pulling data from a local instance of commcare, you should add the server parameters.
+
+Steps: 
+    Login to commcare-sync server using your superuser account created on the above step
+    On the url append admin to see the admin panels: i.e `http://<IP>/admin`
+
+    Then click on the comcare server link ---> Click on ADD COMM CARE SERVER and the following window will appear ---> Add the name and your server URL and save.
+
 ### Deploying Changes
 
 You may wish to deploy updates to the server, for example to pull the latest changes from the CommCare Sync code.
