@@ -35,14 +35,18 @@ Activate virtual environment of commare-sync. If you are not sure where the virt
 example output
 
 `/home/pc/www/.virtualenvs/commcare-sync/bin/postactivate`
+
 `/home/pc/www/.virtualenvs/commcare-sync/bin/activate`
+
 `/home/pc/www/.virtualenvs/superset/bin/postactivate`
+
 `/home/pc/www/.virtualenvs/superset/bin/activate`
 
 To activate use the following command:
     `source /home/pc/www/.virtualenvs/commcare-sync/bin/activate`
 
-And cd to installation directory: that is `~/www/commcare-sync/code_root/` and Create super user using the following command, and follow the wizard `./manage.py createsuperuser` 
+And cd to installation directory: that is `~/www/commcare-sync/code_root/` and Create super user using the following command, 
+ `./manage.py createsuperuser`  and follow the wizard
 
 ## Add commare server
 
