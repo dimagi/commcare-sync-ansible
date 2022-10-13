@@ -52,7 +52,7 @@ Steps:
     Login to commcare-sync server using your superuser account created on the above step
     On the url append admin to see the admin panels: i.e `http://<IP>/admin`
 
-    Then click on the comcare server link ---> Click on ADD COMM CARE SERVER and the following window will appear ---> Add the name and your server URL and save.
+    Then click on the comcare server link ---> Click on ADD COMM CARE SERVER ---> Add the name and your server URL and save.
 
 ### Deploying Changes
 
