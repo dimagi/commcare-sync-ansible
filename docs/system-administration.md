@@ -58,6 +58,15 @@ Steps:
 
     Then click on the comcare server link ---> Click on ADD COMM CARE SERVER ---> Add the name and your server URL and save.
 
+## superset initialization steps
+run  superset db upgrade 
+
+run superset fab create-admin
+
+run superset load_examples (optional. this command loads sample dashboard)
+
+run superset init
+
 ### Deploying Changes
 
 You may wish to deploy updates to the server, for example to pull the latest changes from the CommCare Sync code.
