@@ -58,7 +58,8 @@ Edit the following files with your project-specific changes:
 * `inventories/myproject/group_vars/commcare_sync/vars.yml`
     * `public_host`: your commcare-sync hostname
     * `superset_public_host`: your superset hostname
-    * `superset_enabled`: specifies whether Superset should be installed 
+    * `superset_enabled`: specifies whether Superset should be installed
+    * `commcare_default_server`: (Optional) Full URL of HQ environment for projects. Default: https://www.commcarehq.org
 
 #### Ansible Vault
 
