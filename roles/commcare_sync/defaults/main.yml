@@ -28,6 +28,7 @@ media_dir: "{{ src_dir }}/media"
 
 commcare_sync_export_periodicity: 43200  # 60 * 60 * 12 = every 12 hours
 project_timezone: 'America/New_York'
+commcare_default_server: 'https://www.commcarehq.org'
 
 # superset defaults
 superset_enabled: yes
