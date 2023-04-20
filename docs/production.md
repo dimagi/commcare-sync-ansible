@@ -92,9 +92,10 @@ Add your secrets here, e.g.
 # My Project Vault File
 
 vault_default_db_password: <secret1>
-vault_django_secret_key: <secret2>
+vault_default_superset_password: <secret2>
 vault_mapbox_api_key: <secret3>
 vault_django_secret_key: <secret4>
+vault_superset_secret_key: <secret5>
 ```
 
 (You can generate a good random key from a command line:)
