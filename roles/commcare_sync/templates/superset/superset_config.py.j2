@@ -3,3 +3,4 @@
 PUBLIC_ROLE_LIKE_GAMMA = True
 SQLALCHEMY_DATABASE_URI = 'postgresql://{{ default_db_user }}:{{ default_db_password }}@{{ default_db_host }}:{{ default_db_port }}/{{ superset_db_name }}'
 MAPBOX_API_KEY = '{{ mapbox_api_key }}'
+SECRET_KEY = '{{ vault_superset_secret_key }}'
