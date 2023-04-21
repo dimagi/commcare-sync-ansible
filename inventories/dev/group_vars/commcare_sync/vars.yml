@@ -14,4 +14,5 @@ vault_default_db_password: commcarehq
 vault_default_superset_password: superset
 vault_mapbox_api_key: fixme
 vault_django_secret_key: hunter2
+vault_superset_secret_key: secret_key
 ...

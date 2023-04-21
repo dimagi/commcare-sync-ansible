@@ -60,6 +60,7 @@ django_collectstatic: true
 
 sentry_dsn: "{{ vault_sentry_dsn }}"
 mapbox_api_key: "{{ vault_mapbox_api_key }}"
+superset_secret_key: "{{ vault_superset_secret_key }}"
 
 app_environment:
   DJANGO_SETTINGS_MODULE: "{{ django_settings_module }}"
@@ -68,6 +69,7 @@ superset_environment:
   SQLALCHEMY_DATABASE_URI: 'postgresql://{{ default_db_user }}:{{ default_db_password }}@{{ default_db_host }}:{{ default_db_port }}/{{ superset_db_name }}'
   FLASK_APP: superset
   SUPERSET_CONFIG_PATH: '{{ superset_project_dir }}/superset_config.py'
+  SECRET_KEY: '{{ vault_superset_secret_key }}'
 
 gunicorn_num_workers: 3
 gunicorn_max_requests: 0
