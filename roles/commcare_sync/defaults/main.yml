@@ -41,6 +41,7 @@ superset_firstname: Admin
 superset_lastname: User
 superset_email: superset-admin@example.com
 superset_password: "{{ vault_default_superset_password }}"
+superset_feature_flags: []
 
 postgresql_version: 10
 postgresql_user: postgres
