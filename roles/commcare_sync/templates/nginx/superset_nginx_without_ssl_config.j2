@@ -13,7 +13,11 @@ upstream superset {
 
 server {
   # Serve content
+  {% if superset_public_hosts is defined %}
+  server_name {% for public_host in superset_public_hosts %} {{ public_host }} {% endfor %};
+  {% else %}
   server_name {{ superset_public_host }};
+  {% endif %}
   listen 80;
   listen [::]:80;
 
