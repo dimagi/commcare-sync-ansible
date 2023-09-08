@@ -1,0 +1,56 @@
+#!/bin/bash
+TODAY=$(date +"%Y_%m_%d")
+NOW=$(date +"%Y_%m_%d %H:%M:%S")
+
+BACKUP_NAME="postgres_backup_${TODAY}"
+BACKUP_DIRECTORY="{{ postgresql_backup_dir }}/$BACKUP_NAME"
+LOGFILE="/var/tmp/cron_log"
+
+log() {
+    echo "[$NOW] $1" >> $LOGFILE
+}
+
+log "Creating $BACKUP_DIRECTORY"
+mkdir -p $BACKUP_DIRECTORY
+
+
+#Dump databases in BACKUP_DIRECTORY
+DB_LIST="{{ postgresql_backup_db_list }}"
+
+for db_name in $DB_LIST
+do
+    destination="$BACKUP_DIRECTORY/$db_name.dump"
+    log "Dumping $db_name to $destination";
+
+    pg_dump -w --dbname=$db_name --user="{{ default_db_user }}" --port="{{ default_db_port }}" --host="{{ default_db_host }}" --file=$destination;
+
+    if [[ $? -ne 0 ]] ; then
+        log "Unable to dump database '$db_name'";
+        exit 1
+    fi
+done
+
+#Create archive
+log "Compressing and archiving database dumps";
+tar --gzip -cf $BACKUP_DIRECTORY.tar.zst $BACKUP_DIRECTORY;
+if [[ $? -ne 0 ]] ; then
+    log "Something went wrong while archiving.";
+    exit 1
+fi
+
+#Upload to S3
+log "Uploading to S3";
+aws s3api put-object --bucket "{{ secrets.s3_bucket }}" --key $BACKUP_NAME --server-side-encryption AES256 --body $BACKUP_DIRECTORY.tar.zst
+if [[ $? -ne 0 ]] ; then
+    log "Upload was not successful.";
+    exit 1
+fi
+
+log "Cleaning up local dumps";
+rm -rf $BACKUP_DIRECTORY $BACKUP_DIRECTORY.tar.zst;
+if [[ $? -ne 0 ]] ; then
+    log "Failed to remove files from local machine";
+    exit 1
+fi
+
+exit 0

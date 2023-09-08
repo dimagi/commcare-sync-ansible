@@ -1,0 +1,39 @@
+---
+- include_tasks: set_up_aws.yml
+  tags:
+    - postgres_backup
+    - aws_setup
+
+- name: Copy postgres credentials
+  become: yes
+  template:
+    src: "postgres/pgpass.j2"
+    dest: "{{ postgresql_user_home_dir }}/.pgpass"
+    group: "{{ postgresql_user }}"
+    owner: "{{ postgresql_user }}"
+    mode: 0600
+  tags:
+    - postgres_backup
+
+- name: Copy postgres backup script
+  become: yes
+  template:
+    src: postgres/create_postgres_dump.sh.j2
+    dest: /usr/local/bin/create_postgres_dump.sh
+    group: "{{ postgresql_user }}"
+    owner: "{{ postgresql_user }}"
+    mode: 0700
+  tags:
+    - postgres_backup
+
+- name: Create Weekly Cron job
+  become: yes
+  cron:
+    name: "Backup Postgres Weekly"
+    job: "bash /usr/local/bin/create_postgres_dump.sh"
+    minute: "0"
+    hour: "8"
+    weekday: "0"
+    user: "{{ postgresql_user }}"
+  tags:
+    - postgres_backup

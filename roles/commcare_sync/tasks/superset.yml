@@ -125,7 +125,9 @@
     src: superset/superset_supervisor_config.j2
     dest: /etc/supervisor/conf.d/superset.conf
     backup: yes
-  tags: superset
+  tags:
+    - superset
+    - yomo
 
 - name: Create Supervisor log files.
   copy:
