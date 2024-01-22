@@ -88,4 +88,10 @@ certbot_domains:
   - example.com
   - www.example.com
 
+# Database backup variables
+postgresql_backup_enabled: false
+postgresql_backup_dir: "/var/tmp"
+postgresql_backup_db_list: "superset"
+postgresql_user_home_dir: "/var/lib/postgresql"
+
 ...

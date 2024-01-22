@@ -133,10 +133,15 @@
   tags:
     - superset
     - superset-admin
+    - yomo
 
 # logging
 
 - include_tasks: logrotate.yml
   tags: logging
+
+- include_tasks: pg_backup.yml
+  tags: postgres_backup
+  when: postgresql_backup_enabled
 
 ...

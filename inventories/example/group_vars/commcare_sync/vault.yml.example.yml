@@ -7,10 +7,5 @@ superset_enabled: yes
 app_user: "{{ ansible_user }}"
 django_settings_module: "{{ app_name }}.local"
 
-# Enable this if backup is required
-postgresql_backup_enabled: false
-# Add any other DBs separated with spaces
-postgresql_backup_db_list: "superset"
-
 # vault_ variables are stored in vault.yml file (pw: "secret")
 ...
