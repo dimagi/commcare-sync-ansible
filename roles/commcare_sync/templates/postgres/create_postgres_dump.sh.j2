@@ -53,4 +53,26 @@ if [[ $? -ne 0 ]] ; then
     exit 1
 fi
 
+N_BACKUPS="{{ postgresql_backups_to_keep }}"
+if [ "$N_BACKUPS" -gt 0 ]; then
+    log "Checking for backups to remove";
+    # List objects matching the pattern and capture the result in a variable
+    objects_to_delete=$(aws s3api list-objects --bucket "{{ secrets.s3_bucket }}" --query "Contents[?starts_with(Key, 'postgres_backup_')].[Key, LastModified]" --output text | \
+      sort -k2 | \
+      head -n -$N_BACKUPS)
+
+    # Check if there are any objects to delete
+    if [ -n "$objects_to_delete" ]; then
+      echo "Deleting objects"
+      # Format the object keys into the necessary JSON structure and delete the objects
+      echo "$objects_to_delete" | \
+        awk '{print "{\"Key\":\"" $1 "\"}"}' | \
+        paste -sd, | \
+        sed 's/^/{"Objects":[/;s/$/]}/' | \
+        aws s3api delete-objects --bucket "{{ secrets.s3_bucket }}" --delete file:///dev/stdin
+    else
+      echo "No objects found to delete."
+    fi
+fi
+
 exit 0
