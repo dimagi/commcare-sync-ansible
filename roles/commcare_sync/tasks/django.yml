@@ -2,22 +2,13 @@
 
 # Virtualenv
 
-- name: Install virtualenv.
-  pip:
-    name: virtualenv
-  tags: packages
-
-- name: Create the virtualenv.
-  command: virtualenv -p {{ virtualenv_python_version }} {{ virtualenv_dir }}
-  args:
-    creates: "{{ virtualenv_dir }}/bin/activate"
-
-- name: Change ownership of virtualenv.
-  file:
-    dest: "{{ virtualenv_dir }}"
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-    recurse: yes
+- name: Sync virtualenv.
+  become: yes
+  become_user: "{{ app_user }}"
+  shell:
+    cmd: "{{ ansible_env.HOME }}/.local/bin/uv sync --extra prod"
+    chdir: "{{ src_dir }}"
+  tags: deploy
 
 - name: Create the virtualenv postactivate script to set environment variables.
   template:
@@ -67,13 +58,6 @@
 
 # Django
 
-- name: Install packages required by the Django app inside virtualenv.
-  pip:
-    virtualenv: "{{ virtualenv_dir }}"
-    requirements: "{{ requirements_file }}"
-  tags: deploy
-
-
 - name: Create the local settings file
   template:
     src: django/local.py.j2
@@ -87,12 +71,9 @@
 - name: Run Django database migrations.
   become: yes
   become_user: "{{ app_user }}"
-  django_manage:
-    command: migrate
-    app_path: "{{ src_dir }}"
-    virtualenv: "{{ virtualenv_dir }}"
-    settings: "{{ django_settings_module }}"
-    database: "{{ item }}"
+  command:
+    cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py migrate --database {{ item }}"
+    chdir: "{{ src_dir }}"
   environment: "{{ app_environment }}"
   with_items:
     - default
@@ -102,11 +83,9 @@
 - name: Run Django collectstatic.
   become: yes
   become_user: "{{ app_user }}"
-  django_manage:
-    command: collectstatic
-    app_path: "{{ src_dir }}"
-    virtualenv: "{{ virtualenv_dir }}"
-    settings: "{{ django_settings_module }}"
+  command:
+    cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py collectstatic --no-input"
+    chdir: "{{ src_dir }}"
   environment: "{{ app_environment }}"
   when: django_collectstatic is defined and django_collectstatic
   tags: deploy

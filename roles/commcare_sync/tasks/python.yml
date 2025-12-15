@@ -1,16 +1,12 @@
 ---
 
-- name: Add the deadsnakes repository
-  apt_repository:
-    repo: ppa:deadsnakes/ppa
-    update_cache: "{{ apt_update_cache }}"
-    state: present
-
-- name: Install the appropriate Python version
-  apt:
-    name:
-      - "{{virtualenv_python_version}}"
-      - "{{virtualenv_python_version}}-dev"  # psycopg2 dependency
-      - "{{virtualenv_python_version}}-distutils"
-    update_cache: "{{ apt_update_cache }}"
-    state: present
+- name: Install uv using standalone installer
+  become: yes
+  become_user: "{{ app_user }}"
+  shell:
+    cmd: curl -LsSf https://astral.sh/uv/install.sh | sh
+    chdir: "{{ ansible_env.HOME }}"
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/uv"
+  environment:
+    UV_INSTALL_DIR: "{{ ansible_env.HOME }}/.local/bin"

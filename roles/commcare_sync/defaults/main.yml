@@ -18,9 +18,8 @@ project_name: commcare-sync
 base_dir: "{{home_dir}}/www"
 project_dir: "{{ base_dir }}/{{ project_name }}"
 src_dir: "{{ base_dir }}/{{ project_name }}/code_root"
-virtualenv_dir: "{{ base_dir }}/.virtualenvs/{{ project_name }}"
-virtualenv_python_version: python3.8
-requirements_file: "{{ src_dir }}/requirements.txt"
+virtualenv_dir: "{{ src_dir }}/.venv"
+virtualenv_python_version: python3.14  # Used by Superset. TODO: DRY
 run_dir: "{{ base_dir }}/run"
 log_dir: "{{ base_dir }}/log"
 static_dir: "{{ src_dir }}/static_root"

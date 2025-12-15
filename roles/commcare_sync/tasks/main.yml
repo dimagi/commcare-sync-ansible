@@ -35,22 +35,12 @@
       - vim
       - screen
       - curl
-      - "{{ base_python_package }}-distutils"
       - "{{ base_python_package }}-pip"
       - "i{{ base_python_package }}"
       - supervisor
       - libpq-dev
     update_cache: "{{ apt_update_cache }}"
     state: present
-  tags:
-    - packages
-    - skip_ansible_lint
-
-- name: Upgrade pip.
-  pip:
-    name: pip
-    state: latest
-    executable: pip3
   tags:
     - packages
     - skip_ansible_lint
