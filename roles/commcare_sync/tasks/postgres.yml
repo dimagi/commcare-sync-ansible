@@ -62,7 +62,18 @@
     state: started
     enabled: yes
 
-- name: Ensure the default database is created.
+- name: Ensure the default user exists.
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  postgresql_user:
+    name: "{{ default_db_user }}"
+    password: "{{ default_db_password }}"
+    role_attr_flags: NOSUPERUSER,CREATEDB
+    encrypted: yes
+    state: present
+  tags: postgres
+
+- name: Ensure the default database exists.
   become: yes
   become_user: "{{ postgresql_user }}"
   postgresql_db:
@@ -71,25 +82,7 @@
     lc_collate: 'en_US.UTF-8'
     lc_ctype: 'en_US.UTF-8'
     template: 'template1'
-    state: present
-
-- name: Ensure the default user has access to the database.
-  become: yes
-  become_user: "{{ postgresql_user }}"
-  postgresql_user:
-    login_db: "{{ default_db_name }}"
-    name: "{{ default_db_user }}"
-    password: "{{ default_db_password }}"
-    encrypted: yes
-    state: present
-  tags: postgres
-
-- name: Ensure the default user does not have unnecessary privileges.
-  become: yes
-  become_user: "{{ postgresql_user }}"
-  postgresql_user:
-    name: "{{ default_db_user }}"
-    role_attr_flags: NOSUPERUSER,CREATEDB
+    owner: "{{ default_db_user }}"
     state: present
 
 ...
