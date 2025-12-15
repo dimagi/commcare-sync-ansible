@@ -1,60 +1,134 @@
 Install CommCare Sync for Production
-=====================
-This page outlines the process you need to follow in order to set up a CommCare Sync instance on a production machine.
+====================================
 
-## Choose a location for the control
+This page outlines the process you need to follow to set up a CommCare
+Sync instance on a production machine.
 
-While it is possible to run the ansible playbooks from anywhere, 
+## Choose a location for the control node
+
+While it is possible to run the Ansible playbooks from anywhere,
 it is recommended to run them *on the server you are setting up*.
-This will ensure consistency and also streamline the install process.
+This will ensure consistency and also streamline the installation
+process.
 
-These instructions assume a set up where the ansible control and playbooks are run on the server being set up.
+These instructions assume a setup where the Ansible control node and
+playbooks are run on the server being set up.
 
-## Install Ansible
+## Set up the server
 
-From the [Ansible Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu),
+Dimagi installs CommCare Sync on Ubuntu 24.04 LTS.
+
+### SSH access
+
+Assuming you are running on AWS, copy the AWS private key to
+`~/.ssh/myproject.pem` on your local machine.
+
+You may also need to change permissions on it.
+
+```shell
+$ chmod 400 ~/.ssh/myproject.pem
+```
+
+Test it's working:
+
+```shell
+$ ssh -i ~/.ssh/myproject.pem ubuntu@myproject.example.com
+```
+
+### Set the hostname
+
+*On the remote server*
+
+```shell
+$ sudo hostnamectl set-hostname myproject.example.com`
+```
+
+### Install Ansible
+
+From the
+[Ansible Installation Guide](https://docs.ansible.com/projects/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-ubuntu),
 run the following on your control machine.
 
-```bash
-sudo apt-add-repository ppa:ansible/ansible
-sudo apt-get update
-sudo apt-get install ansible
+```shell
+$ sudo apt update
+$ sudo apt install software-properties-common
+$ sudo add-apt-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
 ```
 
 ## Install CommCare Sync
+
 ### Set up user accounts
 
-On the server, create an account for the ansible user to use.
-This can be done with the following command, answering the prompts.
+On the server, create an account for the Ansible user to use. This can
+be done with the following command, answering the prompts.
 
-```bash
-sudo adduser ansible
+```shell
+$ sudo adduser ansible
+```
+
+Allow the user to use `sudo` without being prompted for a password:
+
+```shell
+$ sudo adduser ansible sudo
+$ cat << EOL | sudo tee /etc/sudoers.d/99-ansible
+# User rules for ansible
+ansible ALL=(ALL) NOPASSWD:ALL
+EOL
+```
+
+Ansible will use SSH to connect to the host as the Ansible user. The
+Ansible user won't need to log in using a password. Lock the password.
+
+```shell
+$ sudo passwd -l ansible
+```
+
+Log in as `ansible` and create an empty SSH `authorized_keys` file:
+
+```shell
+ubuntu $ sudo -iu ansible
+ansible $ mkdir ~/.ssh/
+ansible $ touch ~/.ssh/authorized_keys
+ansible $ logout
+```
+
+Generate an SSH key pair for your user on the remote server. Do not set
+a passphrase. Append the public key to the Ansible user's
+`authorized_keys` file:
+
+```shell
+ubuntu $ ssh-keygen -t ed25519 -C "$USER@$(hostname -f)"
+ubuntu $ cat ~/.ssh/id_ed25519.pub | sudo tee -a ~ansible/.ssh/authorized_keys
 ```
 
 ### Clone the repository
 
-```bash
-git clone https://github.com/dimagi/commcare-sync-ansible.git
+```shell
+$ git clone https://github.com/dimagi/commcare-sync-ansible.git
 ```
 
 ### Prepare your environment
 
 #### Initialize Inventory Folder
-Production environments live in the `inventories/` folder.
-First create a new inventory folder for your environment (we'll use `myproject` as an example).
-This is where your project-specific configuration will live. 
 
-```bash
-mkdir -p inventories/myproject
-cp -r inventories/example/* inventories/myproject
+Production environments live in the `inventories/` folder. First create
+a new inventory folder for your environment (we'll use `myproject` as
+an example). This is where your project-specific configuration will
+live.
+
+```shell
+$ mkdir -p inventories/myproject
+$ cp -r inventories/example/* inventories/myproject
 ```
+
 #### Update Inventory Files
 
 Edit the following files with your project-specific changes:
 * `inventories/myproject/hosts.yml`
     * `vars.env`: your environment name
-    * `hosts.local1.ansible_user`: username of your ansible user
-    * `hosts.local1.ansible_host`: hostname/public IP where your ansible user lives
+    * `hosts.local1.ansible_user`: username of your Ansible user
+    * `hosts.local1.ansible_host`: hostname/public IP where your Ansible user lives
 * `inventories/myproject/group_vars/commcare_sync/vars.yml`
     * `public_host`: your commcare-sync hostname
     * `superset_public_host`: your superset hostname
@@ -64,31 +138,36 @@ Edit the following files with your project-specific changes:
 
 #### Ansible Vault
 
-Production environments should use [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html) to manage secrets.
-That page has lots of details about editing and using files with Vault.
+Production environments should use
+[Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html)
+to manage secrets. That page has lots of details about editing and using
+files with Vault.
 
 The example environment includes a vault file which you should remove:
-```bash
-rm inventories/myproject/group_vars/commcare_sync/vault.yml
+```shell
+$ rm inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
 
 #### Initial Vault Setup
 
-The following one-time setup is used to generate keys / files for Ansible Vault.
+The following one-time setup is used to generate keys and files for
+Ansible Vault.
 
-_Generate Vault Key_
+Generate a vault key:
 
-```bash
-openssl rand -base64 2048 > ~/myproject-ansible-vault
+```shell
+$ openssl rand -base64 2048 > ~/myproject-ansible-vault
 ```
 
-_Create Vault Vars File_
-```bash
-ansible-vault create --vault-password-file ~/myproject-ansible-vault ./inventories/myproject/group_vars/commcare_sync/vault.yml
+Create a vault vars file:
+
+```shell
+$ ansible-vault create \
+    --vault-password-file ~/myproject-ansible-vault \
+    ./inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
 
 Add your secrets here, e.g.
-
 ```
 # My Project Vault File
 
@@ -99,71 +178,46 @@ vault_django_secret_key: <secret4>
 vault_superset_secret_key: <secret5>
 ```
 
-(You can generate a good random key from a command line:)
+Use your password manager to generate good random keys. (Don't have a
+password manager? (WHAT?!) Try [KeePassXC](https://keepassxc.org/).)
+
+You can edit the file later using:
+
+```shell
+$ ansible-vault edit \
+    --vault-password-file ~/myproject-ansible-vault \
+    ./inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
-$ python3 -c 'import string
-import secrets
-chars = string.ascii_letters + string.digits
-key = "".join(secrets.choice(chars) for x in range(64))
-print(key)'
-```
-
-You run the following to edit the file later:
-
-```bash
-ansible-vault edit --vault-password-file ~/myproject-ansible-vault ./inventories/myproject/group_vars/commcare_sync/vault.yml
-```
-
-#### SSH access
-
-Assuming you are running on AWS, *Copy the AWS private key to `~/myproject.pem` on your local machine.*
-
-You may also need to change permissions on it.
-
-```bash
-chmod 400 ~/myproject.pem
-```
-
-Test it's working:
-
-```bash
-ssh -i ~/myproject.pem ubuntu@my.server.ip
-```
-
-#### Set hostname
-
-*On the remote server*
-
-`sudo hostnamectl set-hostname myproject-server`
-
 
 ### Run the installation scripts
-```bash
-ansible-galaxy install -r requirements.yml
-ansible-playbook -i inventories/myproject commcare_sync.yml --vault-password-file ~/myproject-ansible-vault -vv
+
+```shell
+$ ansible-galaxy install -r requirements.yml
+$ ansible-playbook -i inventories/myproject commcare_sync.yml \
+    --vault-password-file ~/myproject-ansible-vault -vv
 ```
 
-### Settting up HTTPS
+### Setting up HTTPS
 
-HTTPS set up is currently not supported by this tool. To set up SSL, login to your machine and install certbot:
+Currently this tool does not support setting up HTTPS. To set up SSL,
+log into your new CommCare Sync server and install certbot:
 
+```shell
+$ sudo apt install certbot python3-certbot-nginx
 ```
-sudo apt install certbot python3-certbot-nginx
-```
 
-Then run:
+Then run
 
-```
-sudo certbot --nginx
+```shell
+$ sudo certbot --nginx
 ```
 
 and follow the prompts.
 
-You'll need to repeat this process for each site (e.g. commcare-sync and superset).
-You may also need to open up port 443 on AWS or your firewall.
+You'll need to repeat this process for each site (e.g. commcare-sync and
+superset). You may also need to open up port 443 on AWS or your
+firewall.
 
-**After setting up HTTPS you should set `ssl_enabled=yes` and `superset_ssl_enabled=yes` in your `vars.yml` file,
-otherwise running a full `ansible-playbook` will undo the changes!**
-
-You can set `ssl_enabled=yes` and `superset_ssl_enabled=yes` to prevent this from happening
-after enabling SSL support.
+**After setting up HTTPS you should set `ssl_enabled=yes` and
+`superset_ssl_enabled=yes` in your `vars.yml` file, otherwise running a
+full `ansible-playbook` will undo the changes!**
