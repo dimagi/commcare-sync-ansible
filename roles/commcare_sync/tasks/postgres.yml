@@ -31,6 +31,13 @@
     state: present
   tags: packages
 
+- name: Create PostgreSQL cluster
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  command: "pg_createcluster -u {{ postgresql_user }} --no-status {{ postgresql_version }} main"
+  args:
+    creates: "/etc/postgresql/{{ postgresql_version }}/main"
+
 - name: Create PostgreSQL config
   become: yes
   become_user: "{{ postgresql_user }}"
@@ -70,11 +77,10 @@
   become: yes
   become_user: "{{ postgresql_user }}"
   postgresql_user:
-    db: "{{ default_db_name }}"
+    login_db: "{{ default_db_name }}"
     name: "{{ default_db_user }}"
     password: "{{ default_db_password }}"
     encrypted: yes
-    priv: ALL
     state: present
   tags: postgres
 

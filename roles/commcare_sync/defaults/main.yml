@@ -42,7 +42,7 @@ superset_email: superset-admin@example.com
 superset_password: "{{ vault_default_superset_password }}"
 superset_feature_flags: []
 
-postgresql_version: 10
+postgresql_version: 18
 postgresql_user: postgres
 postgresql_allow_remote_connections: no
 
