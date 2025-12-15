@@ -11,9 +11,8 @@ cd {{ src_dir }}
 
 # Programs meant to be run under supervisor should not daemonize themselves
 # (do not use --daemon).
-exec celery worker \
-    -n worker1@%h \
-    --app {{ app_name }} \
+exec celery --app {{ app_name }} \
+    worker -n worker1@%h \
     --loglevel DEBUG \
     --logfile {{ log_dir }}/celery.log \
     -Q celery \
