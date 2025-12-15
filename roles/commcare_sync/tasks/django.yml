@@ -93,14 +93,6 @@
 
 # Start scripts + Supervisor
 
-- name: Ensure gunicorn & celery is installed in the virtualenv.
-  pip:
-    virtualenv: "{{ virtualenv_dir }}"
-    name:
-      - gunicorn
-      - celery
-      - eventlet
-
 - name: Create the Gunicorn start script.
   template:
     src: django/gunicorn_start_script.j2
