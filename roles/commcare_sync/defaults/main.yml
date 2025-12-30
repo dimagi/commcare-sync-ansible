@@ -54,6 +54,7 @@ default_db_port: 5432
 
 django_settings_module: "{{ app_name }}.settings"
 django_secret_key: "{{ vault_django_secret_key }}"
+django_fernet_keys: {{ vault_django_fernet_keys }}  # list (don't parse as string)
 django_allow_public_signups: no
 django_migrate: true
 django_collectstatic: true

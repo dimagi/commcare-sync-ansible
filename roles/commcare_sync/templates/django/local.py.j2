@@ -3,6 +3,11 @@ from .settings import *
 {% if django_secret_key %}
 SECRET_KEY = '{{ django_secret_key }}'
 {% endif %}
+FERNET_KEYS = [
+    {% for fernet_key in django_fernet_keys %}
+    '{{ fernet_key }}',
+    {% endfor %}
+]
 
 DATABASES = {
     'default': {

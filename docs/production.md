@@ -168,14 +168,18 @@ $ ansible-vault create \
 ```
 
 Add your secrets here, e.g.
-```
-# My Project Vault File
+```yaml
+---
 
 vault_default_db_password: <secret1>
 vault_default_superset_password: <secret2>
 vault_mapbox_api_key: <secret3>
 vault_django_secret_key: <secret4>
-vault_superset_secret_key: <secret5>
+vault_django_fernet_keys:
+  # Generate with `from cryptography.fernet import Fernet; Fernet.generate_key()`
+  - <secret5>
+vault_superset_secret_key: <secret6>
+...
 ```
 
 Use your password manager to generate good random keys. (Don't have a
