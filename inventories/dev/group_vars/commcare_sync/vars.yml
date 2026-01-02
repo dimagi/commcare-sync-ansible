@@ -10,10 +10,13 @@ django_settings_module: "{{ app_name }}.local"
 
 django_allow_public_signups: yes
 
-# These variables are normally encrypted and stored in an ansible vault.
-vault_default_db_password: commcarehq
-vault_default_superset_password: superset
-vault_mapbox_api_key: fixme
-vault_django_secret_key: hunter2
-vault_superset_secret_key: secret_key
+# These variables are encrypted and stored in an ansible vault:
+vault_default_db_password: <secret1>
+vault_default_superset_password: <secret2>
+vault_mapbox_api_key: <secret3>
+vault_django_secret_key: <secret4>
+vault_django_fernet_keys:
+  # Generate with `from cryptography.fernet import Fernet; Fernet.generate_key()`
+  - <secret5>
+vault_superset_secret_key: <secret6>
 ...
