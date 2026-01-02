@@ -23,7 +23,7 @@ Dimagi installs CommCare Sync on Ubuntu 24.04 LTS.
 If you don't already have an SSH key pair, you'll need to create one:
 
 ```shell
-$ ssh-keygen -t ed25519 \
+ssh-keygen -t ed25519 \
     -f ~/.ssh/id_ed25519_example \
     -C "your_email@example.com"
 ```
@@ -38,7 +38,7 @@ Copy your public key to the `~/.ssh/authorized_keys` file of your user
 on the remote machine:
 
 ```shell
-$ ssh-copy-id -i ~/.ssh/id_ed25519_example.pub ubuntu@remote.ip.addr
+ssh-copy-id -i ~/.ssh/id_ed25519_example.pub ubuntu@remote.ip.addr
 ```
 
 (AWS can do this for you if you
@@ -50,7 +50,7 @@ when you launch an EC2 instance.)
 *On the remote server*
 
 ```shell
-$ sudo hostnamectl set-hostname myproject.example.com`
+sudo hostnamectl set-hostname myproject.example.com`
 ```
 
 ### Install Ansible
@@ -60,10 +60,10 @@ From the
 run the following on your control machine.
 
 ```shell
-$ sudo apt update
-$ sudo apt install software-properties-common
-$ sudo add-apt-repository --yes --update ppa:ansible/ansible
-$ sudo apt install ansible
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
 ```
 
 ## Install CommCare Sync
@@ -74,14 +74,14 @@ On the server, create an account for the Ansible user to use. This can
 be done with the following command, answering the prompts.
 
 ```shell
-$ sudo adduser ansible
+sudo adduser ansible
 ```
 
 Allow the user to use `sudo` without being prompted for a password:
 
 ```shell
-$ sudo adduser ansible sudo
-$ cat << EOL | sudo tee /etc/sudoers.d/99-ansible
+sudo adduser ansible sudo
+cat << EOL | sudo tee /etc/sudoers.d/99-ansible
 # User rules for ansible
 ansible ALL=(ALL) NOPASSWD:ALL
 EOL
@@ -91,7 +91,7 @@ Ansible will use SSH to connect to the host as the Ansible user. The
 Ansible user won't need to log in using a password. Lock the password.
 
 ```shell
-$ sudo passwd -l ansible
+sudo passwd -l ansible
 ```
 
 Log in as `ansible` and create an empty SSH `authorized_keys` file:
@@ -115,7 +115,7 @@ ubuntu $ cat ~/.ssh/id_ed25519.pub | sudo tee -a ~ansible/.ssh/authorized_keys
 ### Clone the repository
 
 ```shell
-$ git clone https://github.com/dimagi/commcare-sync-ansible.git
+git clone https://github.com/dimagi/commcare-sync-ansible.git
 ```
 
 ### Prepare your environment
@@ -128,8 +128,8 @@ an example). This is where your project-specific configuration will
 live.
 
 ```shell
-$ mkdir -p inventories/myproject
-$ cp -r inventories/example/* inventories/myproject
+mkdir -p inventories/myproject
+cp -r inventories/example/* inventories/myproject
 ```
 
 #### Update Inventory Files
@@ -155,7 +155,7 @@ files with Vault.
 
 The example environment includes a vault file which you should remove:
 ```shell
-$ rm inventories/myproject/group_vars/commcare_sync/vault.yml
+rm inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
 
 #### Initial Vault Setup
@@ -166,13 +166,13 @@ Ansible Vault.
 Generate a vault key:
 
 ```shell
-$ openssl rand -base64 2048 > ~/myproject-ansible-vault
+openssl rand -base64 2048 > ~/myproject-ansible-vault
 ```
 
 Create a vault vars file:
 
 ```shell
-$ ansible-vault create \
+ansible-vault create \
     --vault-password-file ~/myproject-ansible-vault \
     ./inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
@@ -198,7 +198,7 @@ password manager? (WHAT?!) Try [KeePassXC](https://keepassxc.org/).)
 You can edit the file later using:
 
 ```shell
-$ ansible-vault edit \
+ansible-vault edit \
     --vault-password-file ~/myproject-ansible-vault \
     ./inventories/myproject/group_vars/commcare_sync/vault.yml
 ```
@@ -206,8 +206,8 @@ $ ansible-vault edit \
 ### Run the installation scripts
 
 ```shell
-$ ansible-galaxy install -r requirements.yml
-$ ansible-playbook -i inventories/myproject commcare_sync.yml \
+ansible-galaxy install -r requirements.yml
+ansible-playbook -i inventories/myproject commcare_sync.yml \
     --vault-password-file ~/myproject-ansible-vault -vv
 ```
 
@@ -217,13 +217,13 @@ Currently this tool does not support setting up HTTPS. To set up SSL,
 log into your new CommCare Sync server and install certbot:
 
 ```shell
-$ sudo apt install certbot python3-certbot-nginx
+sudo apt install certbot python3-certbot-nginx
 ```
 
 Then run
 
 ```shell
-$ sudo certbot --nginx
+sudo certbot --nginx
 ```
 
 and follow the prompts.
