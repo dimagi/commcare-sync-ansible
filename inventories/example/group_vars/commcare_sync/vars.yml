@@ -13,5 +13,4 @@ postgresql_backup_enabled: false
 postgresql_backup_db_list: "superset"
 postgresql_backups_to_keep: 5  # 0 will ignore this setting
 
-# vault_ variables are stored in vault.yml file (pw: "secret")
 ...

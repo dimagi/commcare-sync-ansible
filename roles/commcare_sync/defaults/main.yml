@@ -18,9 +18,8 @@ project_name: commcare-sync
 base_dir: "{{home_dir}}/www"
 project_dir: "{{ base_dir }}/{{ project_name }}"
 src_dir: "{{ base_dir }}/{{ project_name }}/code_root"
-virtualenv_dir: "{{ base_dir }}/.virtualenvs/{{ project_name }}"
-virtualenv_python_version: python3.8
-requirements_file: "{{ src_dir }}/requirements.txt"
+virtualenv_dir: "{{ src_dir }}/.venv"
+virtualenv_python_version: python3.14  # Used by Superset. TODO: DRY
 run_dir: "{{ base_dir }}/run"
 log_dir: "{{ base_dir }}/log"
 static_dir: "{{ src_dir }}/static_root"
@@ -43,7 +42,7 @@ superset_email: superset-admin@example.com
 superset_password: "{{ vault_default_superset_password }}"
 superset_feature_flags: []
 
-postgresql_version: 10
+postgresql_version: 18
 postgresql_user: postgres
 postgresql_allow_remote_connections: no
 
@@ -55,6 +54,7 @@ default_db_port: 5432
 
 django_settings_module: "{{ app_name }}.settings"
 django_secret_key: "{{ vault_django_secret_key }}"
+django_fernet_keys: {{ vault_django_fernet_keys }}  # list (don't parse as string)
 django_allow_public_signups: no
 django_migrate: true
 django_collectstatic: true
