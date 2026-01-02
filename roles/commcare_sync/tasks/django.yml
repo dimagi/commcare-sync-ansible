@@ -6,7 +6,7 @@
   become: yes
   become_user: "{{ app_user }}"
   shell:
-    cmd: "{{ ansible_env.HOME }}/.local/bin/uv sync --extra prod"
+    cmd: "{{ ansible_env.HOME }}/.local/bin/uv sync --frozen --extra prod"
     chdir: "{{ src_dir }}"
   tags: deploy
 
