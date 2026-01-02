@@ -20,20 +20,30 @@ Dimagi installs CommCare Sync on Ubuntu 24.04 LTS.
 
 ### SSH access
 
-Assuming you are running on AWS, copy the AWS private key to
-`~/.ssh/myproject.pem` on your local machine.
-
-You may also need to change permissions on it.
+If you don't already have an SSH key pair, you'll need to create one:
 
 ```shell
-$ chmod 400 ~/.ssh/myproject.pem
+$ ssh-keygen -t ed25519 \
+    -f ~/.ssh/id_ed25519_example \
+    -C "your_email@example.com"
 ```
 
-Test it's working:
+This uses the Ed25519 algorithm, which is secure, fast and up-to-date.
+`-f` is optional and sets a filename. Give it a name that indicates
+which context it should be used in (e.g. if you have a work identity
+and a personal identity) or the date when it was created. Standard
+practice is to set your email address as the key's comment with `-C`.
+
+Copy your public key to the `~/.ssh/authorized_keys` file of your user
+on the remote machine:
 
 ```shell
-$ ssh -i ~/.ssh/myproject.pem ubuntu@myproject.example.com
+$ ssh-copy-id -i ~/.ssh/id_ed25519_example.pub ubuntu@remote.ip.addr
 ```
+
+(AWS can do this for you if you
+[specify a key pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)
+when you launch an EC2 instance.)
 
 ### Set the hostname
 
