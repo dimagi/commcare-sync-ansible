@@ -42,9 +42,7 @@ setting. To enable anyone to sign up, you should set it to
 If public signups are disabled, then only superusers can create new
 accounts, via the Django Admin UI or command line.
 
-
-Create Superuser
-----------------
+### Create Superuser
 
 Change into the CommCare Sync directory, activate the virtual
 environment, and run the "createsuperuser" management command.
@@ -58,9 +56,7 @@ source .venv/bin/activate
 
 Then follow the prompts.
 
-
-Add CommCare Server
--------------------
+### Add CommCare Server
 
 By default, CommCare Sync is preconfigured with "www.commcarehq.org" as
 the default site from which to pull data. To pull data from a different
@@ -92,9 +88,19 @@ superset init
 
 ### Deploying Changes
 
-To deploy updates to the server:
+To deploy updates to the server, log in as your user on the remote
+server:
 
 ```shell
+ssh ubuntu@cc-sync.example.com
+```
+
+On the remote server, add your SSH key to the SSH agent, and run the
+Ansible playbook with `--tags=deploy`:
+
+```shell
+eval `ssh-agent`
+ssh-add ~/.ssh/id_ed25519_example
 ansible-playbook -i inventories/your-environment \
     commcare_sync.yml \
     --vault-password-file /path/to/password/file \
