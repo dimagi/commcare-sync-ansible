@@ -235,3 +235,17 @@ firewall.
 **After setting up HTTPS you should set `ssl_enabled=yes` and
 `superset_ssl_enabled=yes` in your `vars.yml` file, otherwise running a
 full `ansible-playbook` will undo the changes!**
+
+
+Initialize Superset
+-------------------
+
+If installation included Superset, run the following commands to
+initialize its data:
+
+```shell
+superset db upgrade
+superset fab create-admin
+superset load_examples  # Optional: This command loads a sample dashboard
+superset init
+```

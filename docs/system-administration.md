@@ -73,19 +73,6 @@ instance of CommCare HQ, you will need to add the server parameters.
 
 5. Click "Save"
 
-
-Superset Initialization Steps
------------------------------
-
-Run the following commands:
-
-```shell
-superset db upgrade
-superset fab create-admin
-superset load_examples  # Optional: This command loads a sample dashboard
-superset init
-```
-
 ### Deploying Changes
 
 To deploy updates to the server, log in as your user on the remote
