@@ -37,3 +37,38 @@ COMMCARE_SYNC_EXPORT_PERIODICITY = {{ commcare_sync_export_periodicity }}
 TIME_ZONE = '{{ project_timezone }}'
 
 COMMCARE_DEFAULT_SERVER = '{{ commcare_default_server }}'
+
+
+{% comment %}
+{# Examples for extending settings #}
+
+# Email
+# See https://github.com/anymail/django-anymail for more details/examples
+EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
+ANYMAIL = {
+    'MAILGUN_API_KEY': '{{ mailgun_api_key }}',
+    'MAILGUN_SENDER_DOMAIN': '{{ mailgun_sender_domain }}',
+}
+# See https://docs.djangoproject.com/en/5.2/ref/settings/
+DEFAULT_FROM_EMAIL = '{{ django_default_from_email }}'
+SERVER_EMAIL = '{{ django_server_email }}'
+ADMINS = [('{{ django_admin_name }}', '{{ django_admin_email }}')]
+
+
+GOOGLE_ANALYTICS_ID = ''
+
+
+# Sentry
+# Populate this to configure Sentry. e.g. 'https://****@sentry.io/12345'
+SENTRY_DSN = '{{ sentry_dsn }}'
+
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()]
+    )
+
+{% endcomment %}
