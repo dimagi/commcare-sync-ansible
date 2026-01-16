@@ -60,8 +60,8 @@
 
 - name: Create the local settings file
   template:
-    src: django/local.py.j2
-    dest: "{{ src_dir }}/{{ app_name }}/local.py"
+    src: django/settings_local.py.j2
+    dest: "{{ src_dir }}/{{ app_name }}/settings_local.py"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: 0640

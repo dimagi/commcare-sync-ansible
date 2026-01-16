@@ -138,8 +138,8 @@ Database Management
 -------------------
 
 CommCare Sync uses a PostgreSQL system database, configured in the
-Django settings file, `commcare_sync/local.py`. You can open a shell to
-it using `./manage.py dbshell` in the CommCare Sync virtual
+Django settings file, `commcare_sync/settings_local.py`. You can open a
+shell to it using `./manage.py dbshell` in the CommCare Sync virtual
 environment.
 
 CommCare Sync can export data to databases that are served by the same
