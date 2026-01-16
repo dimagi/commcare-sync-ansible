@@ -1,11 +1,11 @@
 ---
 
 public_host: commcare-sync.example.com
-superset_public_host: superset.example.com
+
 superset_enabled: yes
+superset_public_host: superset.example.com
 
 app_user: "{{ ansible_user }}"
-django_settings_module: "{{ app_name }}.local"
 
 # Enable this if backup is required
 postgresql_backup_enabled: false

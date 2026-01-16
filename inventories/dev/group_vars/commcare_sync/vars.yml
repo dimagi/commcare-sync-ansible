@@ -1,14 +1,14 @@
 ---
 
 public_host: 192.168.11.10
-superset_public_host: superset.vagrant.local  # this needs to be manually mapped to 192.168.11.10 in /etc/hosts
+
 superset_enabled: yes
+superset_public_host: superset.vagrant.local  # this needs to be manually mapped to 192.168.11.10 in /etc/hosts
 superset_feature_flags: []
 
 app_user: "{{ ansible_user }}"
-django_settings_module: "{{ app_name }}.local"
 
-django_allow_public_signups: yes
+django_allow_public_signups: no
 
 # These variables are encrypted and stored in an ansible vault:
 vault_default_db_password: <secret1>
