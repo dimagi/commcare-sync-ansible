@@ -4,7 +4,9 @@ Install CommCare Sync for Production
 This page outlines the process you need to follow to set up a CommCare
 Sync instance on a production machine.
 
-## Choose a location for the control node
+
+Choose a location for the control node
+--------------------------------------
 
 While it is possible to run the Ansible playbooks from anywhere,
 it is recommended to run them *on the server you are setting up*.
@@ -14,7 +16,9 @@ process.
 These instructions assume a setup where the Ansible control node and
 playbooks are run on the server being set up.
 
-## Set up the server
+
+Set up the server
+-----------------
 
 Dimagi installs CommCare Sync on Ubuntu 24.04 LTS.
 
@@ -66,7 +70,9 @@ sudo add-apt-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible
 ```
 
-## Install CommCare Sync
+
+Install CommCare Sync
+---------------------
 
 ### Set up user accounts
 
@@ -235,3 +241,17 @@ firewall.
 **After setting up HTTPS you should set `ssl_enabled=yes` and
 `superset_ssl_enabled=yes` in your `vars.yml` file, otherwise running a
 full `ansible-playbook` will undo the changes!**
+
+
+Initialize Superset
+-------------------
+
+If installation included Superset, run the following commands to
+initialize its data:
+
+```shell
+superset db upgrade
+superset fab create-admin
+superset load_examples  # Optional: This command loads a sample dashboard
+superset init
+```
