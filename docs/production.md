@@ -238,9 +238,10 @@ You'll need to repeat this process for each site (e.g. commcare-sync and
 superset). You may also need to open up port 443 on AWS or your
 firewall.
 
-**After setting up HTTPS you should set `ssl_enabled=yes` and
-`superset_ssl_enabled=yes` in your `vars.yml` file, otherwise running a
-full `ansible-playbook` will undo the changes!**
+> [!WARNING]
+> After setting up HTTPS you should set `ssl_enabled: yes` and
+> `superset_ssl_enabled: yes` in your `vars.yml` file, otherwise running
+> a full `ansible-playbook` will undo the changes!
 
 
 Initialize Superset
