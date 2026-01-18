@@ -1,13 +1,13 @@
 # Local Django settings for production
+import json
+
 
 {% if django_secret_key %}
 SECRET_KEY = '{{ django_secret_key }}'
 {% endif %}
-FERNET_KEYS = [
-    {% for fernet_key in django_fernet_keys %}
-    '{{ fernet_key }}',
-    {% endfor %}
-]
+{% if django_fernet_keys %}
+FERNET_KEYS = json.loads('{{ django_fernet_keys }}')
+{% endif %}
 
 DATABASES = {
     'default': {
