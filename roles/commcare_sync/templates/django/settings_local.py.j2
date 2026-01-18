@@ -30,6 +30,9 @@ ACCOUNT_ADAPTER = 'apps.users.account_adapter.NoNewUsersAccountAdapter'
 ALLOWED_HOSTS = [
     '{{ public_host }}',
 ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://{{ public_host }}',
+]
 
 DEBUG = False
 
