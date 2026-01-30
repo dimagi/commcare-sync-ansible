@@ -27,7 +27,7 @@ sudo apt-get install ansible
 vagrant up --provision
 ```
 
-This should download and deploy the latest commcare-sync code to a local Vagrant VM.
+This should download and deploy the latest CommCare Data Pipeline code to a local Vagrant VM.
 
 If everything is successful you can load [http://192.168.11.10/](http://192.168.11.10/) in a browser
 and get going!

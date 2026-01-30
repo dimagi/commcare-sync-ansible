@@ -1,4 +1,4 @@
-- name: commcare-sync log rolling configurations
+- name: CommCare Data Pipeline logrotate configurations
   import_role:
     name: ansible-logrotate
   tags: logging

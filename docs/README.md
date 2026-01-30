@@ -1,4 +1,4 @@
-# Commcare Sync Administration Docs
+# Commcare Data Pipeline Administration Docs
 
 ## Building the docs
 

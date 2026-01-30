@@ -1,6 +1,7 @@
 Maintenance
 ===========
-This shows you how to deploy CommCare Sync in steady state as well as some other useful tasks.
+
+This shows you how to deploy CommCare Data Pipeline in a steady state as well as some other useful tasks.
 
 ### Steady-State Deploy
 

@@ -6,9 +6,9 @@ Here are the approximate steps to migrate a server from one environment to anoth
 1. Stand up a new server with ansible. For ease of migration, 
    it is recommended to use the same secrets as the previous environment unless there 
    is any reason to believe there was a compromise/breach. 
-2. Back up the commcare-sync, superset, and data export tool databases to pgdump files.
+2. Back up the CommCare Data Pipeline, Superset, and Data Export Tool databases to pgdump files.
 3. Transfer the pgdump files to the new server.
-4. Restore the commcare-sync and superset databases to the new server.
+4. Restore the CommCare Data Pipeline and Superset databases to the new server.
 5. Copy the export config files from the old server to the new server.
 6. Test.
 

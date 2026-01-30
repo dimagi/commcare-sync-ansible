@@ -1,8 +1,8 @@
-Install CommCare Sync for Production
-====================================
+Install CommCare Data Pipeline for Production
+=============================================
 
 This page outlines the process you need to follow to set up a CommCare
-Sync instance on a production machine.
+Data Pipeline instance on a production machine.
 
 
 Choose a location for the control node
@@ -20,7 +20,7 @@ playbooks are run on the server being set up.
 Set up the server
 -----------------
 
-Dimagi installs CommCare Sync on Ubuntu 24.04 LTS.
+Dimagi installs CommCare Data Pipeline on Ubuntu 24.04 LTS.
 
 ### SSH access
 
@@ -71,8 +71,8 @@ sudo apt install ansible
 ```
 
 
-Install CommCare Sync
----------------------
+Install CommCare Data Pipeline
+------------------------------
 
 ### Set up user accounts
 
@@ -235,9 +235,9 @@ sudo certbot --nginx
 
 and follow the prompts.
 
-You'll need to repeat this process for each site (e.g. commcare-sync and
-superset). You may also need to open up port 443 on AWS or your
-firewall.
+You'll need to repeat this process for each site (i.e. CommCare Data
+Pipeline and Superset). You may also need to open up port 443 on AWS or
+your firewall.
 
 > [!WARNING]
 > After setting up HTTPS you should set `ssl_enabled: yes` and

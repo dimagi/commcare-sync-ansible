@@ -17,8 +17,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'CommCare Sync Ansible'
-copyright = '2021, Dimagi'
+project = 'CommCare Data Pipeline Ansible'
+copyright = '2026, Dimagi'
 author = 'Dimagi'
 
 
