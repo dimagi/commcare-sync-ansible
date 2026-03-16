@@ -114,10 +114,4 @@
     - provision
     - logging
 
-- include_tasks: pg_backup.yml
-  tags:
-    - provision
-    - postgres_backup
-  when: postgresql_backup_enabled
-
 ...
