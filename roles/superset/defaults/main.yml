@@ -13,7 +13,7 @@ superset_email: superset-admin@example.com
 superset_password: "{{ vault_default_superset_password }}"
 superset_feature_flags: []
 
-virtualenv_python_version: python3.14  # Used by Superset. TODO: DRY
+virtualenv_python_version: python3.14
 
 superset_environment:
   SQLALCHEMY_DATABASE_URI: 'postgresql://{{ default_db_user }}:{{ default_db_password }}@{{ default_db_host }}:{{ default_db_port }}/{{ superset_db_name }}'

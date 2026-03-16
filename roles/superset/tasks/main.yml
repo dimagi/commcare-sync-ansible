@@ -1,3 +1,5 @@
+---
+
 # Database
 
 - name: Ensure the superset  database is created.
@@ -122,7 +124,7 @@
 
 - name: Create the Superset Supervisor config file.
   template:
-    src: superset/superset_supervisor_config.j2
+    src: superset_supervisor_config.j2
     dest: /etc/supervisor/conf.d/superset.conf
     backup: yes
   tags:
