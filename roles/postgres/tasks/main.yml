@@ -5,6 +5,9 @@
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     id: ACCC4CF8
     state: present
+  tags:
+    - provision
+    - postgres
 
 - name: Add the PostgreSQL repository to the apt sources list.
   apt_repository:
@@ -12,15 +15,24 @@
     update_cache: "{{ apt_update_cache }}"
     state: present
     filename: postgres
+  tags:
+    - provision
+    - postgres
 
 - name: Ensure locale is available.
   locale_gen:
     name: en_US.UTF-8
     state: present
+  tags:
+    - provision
+    - postgres
 
 - name: Set default locale.
   command: localectl set-locale LANG="en_US.UTF-8"
   changed_when: false
+  tags:
+    - provision
+    - postgres
 
 - name: Install PostgreSQL {{ postgresql_version }}.
   apt:
@@ -30,7 +42,10 @@
       - "{{ base_python_package }}-psycopg2"
     update_cache: "{{ apt_update_cache }}"
     state: present
-  tags: packages
+  tags:
+    - provision
+    - packages
+    - postgres
 
 - name: Create PostgreSQL cluster
   become: yes
@@ -38,6 +53,9 @@
   command: "pg_createcluster -u {{ postgresql_user }} --no-status {{ postgresql_version }} main"
   args:
     creates: "/etc/postgresql/{{ postgresql_version }}/main"
+  tags:
+    - provision
+    - postgres
 
 - name: Create PostgreSQL config
   become: yes
@@ -47,6 +65,9 @@
     dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
     mode: 0640
   notify: restart postgresql
+  tags:
+    - provision
+    - postgres
 
 - name: Create PostgreSQL ACL
   become: yes
@@ -56,12 +77,18 @@
     dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
     mode: 0640
   notify: restart postgresql
+  tags:
+    - provision
+    - postgres
 
 - name: Ensure the PostgreSQL service is running.
   service:
     name: postgresql
     state: started
     enabled: yes
+  tags:
+    - provision
+    - postgres
 
 - name: Ensure the default user exists.
   become: yes
@@ -72,7 +99,9 @@
     role_attr_flags: NOSUPERUSER,CREATEDB
     encrypted: yes
     state: present
-  tags: postgres
+  tags:
+    - provision
+    - postgres
 
 - name: Ensure the default database exists.
   become: yes
@@ -85,3 +114,6 @@
     template: 'template1'
     owner: "{{ default_db_user }}"
     state: present
+  tags:
+    - provision
+    - postgres

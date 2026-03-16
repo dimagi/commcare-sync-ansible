@@ -10,7 +10,9 @@
     chdir: "{{ src_dir }}"
   args:
     creates: "{{ virtualenv_dir }}/bin/activate"
-  tags: deploy
+  tags:
+    - deploy
+    - django
 
 - name: Create the virtualenv postactivate script to set environment variables.
   template:
@@ -20,7 +22,9 @@
     group: "{{ app_group }}"
     mode: 0750
     backup: yes
-  tags: deploy
+  tags:
+    - deploy
+    - django
 
 
 # Source
@@ -32,6 +36,9 @@
     group: "{{ app_group }}"
     mode: 0750
     state: directory
+  tags:
+    - deploy
+    - django
 
 - name: Pull latest source code.
   become: yes
@@ -42,7 +49,9 @@
     version: master
     recursive: no
     accept_hostkey: yes
-  tags: deploy
+  tags:
+    - deploy
+    - django
 
 - name: Create the app folders.
   file:
@@ -56,6 +65,9 @@
     - "{{ run_dir }}"
     - "{{ static_dir }}"
     - "{{ media_dir }}"
+  tags:
+    - deploy
+    - django
 
 
 # Django
@@ -68,7 +80,9 @@
     group: "{{ app_group }}"
     mode: 0640
     backup: yes
-  tags: deploy
+  tags:
+    - deploy
+    - django
 
 - name: Run Django database migrations.
   become: yes
@@ -82,7 +96,9 @@
   when: django_migrate is defined and django_migrate
   register: django_migrate_result
   changed_when: "'No migrations to apply' not in django_migrate_result.stdout"
-  tags: deploy
+  tags:
+    - deploy
+    - django
 
 - name: Run Django collectstatic.
   become: yes
@@ -94,7 +110,9 @@
   when: django_collectstatic is defined and django_collectstatic
   register: django_collectstatic_result
   changed_when: "'0 static files copied' not in django_collectstatic_result.stdout"
-  tags: deploy
+  tags:
+    - deploy
+    - django
 
 
 # Start scripts + Supervisor
@@ -107,7 +125,10 @@
     group: "{{ app_group }}"
     mode: 0750
     backup: yes
-  tags: supervisor
+  tags:
+    - deploy
+    - django
+    - supervisor
 
 - name: Create the Celery default start script.
   template:
@@ -117,28 +138,40 @@
     group: "{{ app_group }}"
     mode: 0750
     backup: yes
-  tags: supervisor
+  tags:
+    - deploy
+    - django
+    - supervisor
 
 - name: Ensure the Supervisor service is running.
   service:
     name: supervisor
     state: started
     enabled: yes
-  tags: supervisor
+  tags:
+    - deploy
+    - django
+    - supervisor
 
 - name: Create the Gunicorn Supervisor config file.
   template:
     src: gunicorn_supervisor_config.j2
     dest: /etc/supervisor/conf.d/{{ app_name }}.conf
     backup: yes
-  tags: supervisor
+  tags:
+    - deploy
+    - django
+    - supervisor
 
 - name: Create the Celery default Supervisor config file.
   template:
     src: celery_default_supervisor_config.j2
     dest: /etc/supervisor/conf.d/{{ app_name }}_celery_default.conf
     backup: yes
-  tags: supervisor
+  tags:
+    - deploy
+    - django
+    - supervisor
 
 - name: Create Supervisor log files.
   copy:
@@ -152,7 +185,10 @@
     - celery.log
     - gunicorn.log
     - django.log
-  tags: supervisor
+  tags:
+    - deploy
+    - django
+    - supervisor
 
 - name: Re-read the Supervisor config files.
   supervisorctl:
@@ -161,7 +197,10 @@
   with_items:
     - "{{ app_name }}"
     - "{{ app_name }}_celery_default"
-  tags: supervisor
+  tags:
+    - deploy
+    - django
+    - supervisor
 
 - name: Restart the Supervisor config files.
   supervisorctl:
@@ -172,4 +211,5 @@
     - "{{ app_name }}_celery_default"
   tags:
     - deploy
+    - django
     - supervisor

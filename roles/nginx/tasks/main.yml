@@ -8,6 +8,7 @@
     update_cache: "{{ apt_update_cache }}"
     state: present
   tags:
+    - provision
     - packages
     - nginx
 
@@ -16,14 +17,18 @@
     name: nginx
     enabled: yes
     state: started
-  tags: nginx
+  tags:
+    - provision
+    - nginx
 
 - name: Adding 'www-data' user to {{ app_group }} group.
   user:
     name: www-data
     groups: "{{ app_group }}"
     append: yes
-  tags: nginx
+  tags:
+    - provision
+    - nginx
 
 - name: Create {{ app_name }} {{ env }} nginx config.
   template:
@@ -31,7 +36,9 @@
     dest: /etc/nginx/sites-available/{{ project_name }}.conf
     backup: yes
   when: "not ssl_enabled"
-  tags: nginx
+  tags:
+    - provision
+    - nginx
 
 - name: Enable {{ app_name }} nginx config.
   file:
@@ -39,14 +46,20 @@
     dest: /etc/nginx/sites-enabled/{{ project_name }}.conf
     state: link
   when: "not ssl_enabled"
-  tags: nginx
+  tags:
+    - provision
+    - nginx
 
 - name: Disable default nginx config.
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
-  tags: nginx
+  tags:
+    - provision
+    - nginx
 
 - name: Test & reload nginx config.
   shell: nginx -t && nginx -s reload
-  tags: nginx
+  tags:
+    - provision
+    - nginx

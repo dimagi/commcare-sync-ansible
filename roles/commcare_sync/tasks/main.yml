@@ -2,12 +2,16 @@
 
 - name: Test
   command: echo it works!
+  tags:
+    - always
 
 # Swap
 
 - include_tasks: create_swap_file.yml
   when: swap_file_enabled
-  tags: swap
+  tags:
+    - provision
+    - swap
 
 
 # Packages
@@ -18,6 +22,7 @@
     update_cache: "{{ apt_update_cache }}"
     upgrade: dist
   tags:
+    - provision
     - packages
     - packages.security
     - skip_ansible_lint
@@ -42,6 +47,7 @@
     update_cache: "{{ apt_update_cache }}"
     state: present
   tags:
+    - provision
     - packages
     - skip_ansible_lint
 
@@ -49,7 +55,9 @@
 # Python
 
 - include_tasks: python.yml
-  tags: python
+  tags:
+    - provision
+    - python
 
 
 # Users & Groups
@@ -59,6 +67,9 @@
     name: "{{ app_group }}"
     system: yes
     state: present
+  tags:
+    - provision
+    - users
 
 - name: Create the app user.
   user:
@@ -66,6 +77,9 @@
     group: "{{ app_group }}"
     shell: /bin/bash
     state: present
+  tags:
+    - provision
+    - users
 
 - name: Create {{ base_dir }} folder.
   file:
@@ -73,6 +87,9 @@
     group: "{{ app_group }}"
     mode: 0755
     state: directory
+  tags:
+    - provision
+    - users
 
 - name: Create user .bash_aliases file.
   template:
@@ -82,7 +99,9 @@
     group: "{{ app_group }}"
     mode: 0740
     backup: yes
-  tags: deploy
+  tags:
+    - deploy
+    - users
 
 
 
@@ -92,10 +111,14 @@
 # logging
 
 - include_tasks: logrotate.yml
-  tags: logging
+  tags:
+    - provision
+    - logging
 
 - include_tasks: pg_backup.yml
-  tags: postgres_backup
+  tags:
+    - provision
+    - postgres_backup
   when: postgresql_backup_enabled
 
 ...

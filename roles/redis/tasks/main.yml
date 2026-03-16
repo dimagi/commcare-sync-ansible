@@ -5,10 +5,16 @@
     name: redis-server
     update_cache: "{{ apt_update_cache }}"
     state: present
-  tags: packages
+  tags:
+    - provision
+    - packages
+    - redis
 
 - name: Ensure Redis is running
   service:
     name: redis-server
     state: started
     enabled: yes
+  tags:
+    - provision
+    - redis
