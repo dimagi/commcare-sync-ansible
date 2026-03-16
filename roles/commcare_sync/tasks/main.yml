@@ -97,14 +97,6 @@
 
 
 
-# Superset
-
-- include_tasks: superset.yml
-  when: superset_enabled
-  tags:
-    - superset
-    - superset-admin
-    - yomo
 
 # logging
 

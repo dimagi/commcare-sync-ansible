@@ -19,7 +19,6 @@ base_dir: "{{home_dir}}/www"
 project_dir: "{{ base_dir }}/{{ project_name }}"
 src_dir: "{{ base_dir }}/{{ project_name }}/code_root"
 virtualenv_dir: "{{ src_dir }}/.venv"
-virtualenv_python_version: python3.14  # Used by Superset. TODO: DRY
 run_dir: "{{ base_dir }}/run"
 log_dir: "{{ base_dir }}/log"
 static_dir: "{{ src_dir }}/static_root"
@@ -29,18 +28,6 @@ commcare_sync_export_periodicity: 43200  # 60 * 60 * 12 = every 12 hours
 project_timezone: 'America/New_York'
 commcare_default_server: 'https://www.commcarehq.org'
 
-# superset defaults
-superset_enabled: yes
-superset_ssl_enabled: no
-superset_db_name: "superset"
-superset_project_dir: "{{ base_dir }}/superset"
-superset_virtualenv_dir: "{{ base_dir }}/.virtualenvs/superset"
-superset_username: admin
-superset_firstname: Admin
-superset_lastname: User
-superset_email: superset-admin@example.com
-superset_password: "{{ vault_default_superset_password }}"
-superset_feature_flags: []
 
 
 django_settings_module: "{{ app_name }}.settings"
@@ -56,12 +43,6 @@ superset_secret_key: "{{ vault_superset_secret_key }}"
 
 app_environment:
   DJANGO_SETTINGS_MODULE: "{{ django_settings_module }}"
-
-superset_environment:
-  SQLALCHEMY_DATABASE_URI: 'postgresql://{{ default_db_user }}:{{ default_db_password }}@{{ default_db_host }}:{{ default_db_port }}/{{ superset_db_name }}'
-  FLASK_APP: superset
-  SUPERSET_CONFIG_PATH: '{{ superset_project_dir }}/superset_config.py'
-  SECRET_KEY: '{{ vault_superset_secret_key }}'
 
 gunicorn_num_workers: 3
 gunicorn_max_requests: 0
