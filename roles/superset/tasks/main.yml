@@ -62,7 +62,9 @@
       - email_validator
       - gunicorn
       - gevent
-  tags: superset
+  tags:
+    - deploy
+    - superset
 
 # Create config directory and files
 
@@ -91,6 +93,8 @@
   become_user: "{{ app_user }}"
   environment: "{{ superset_environment }}"
   shell: "{{ superset_virtualenv_dir }}/bin/superset db upgrade"
+  register: superset_migrate_result
+  changed_when: "'Already up to date' not in superset_migrate_result.stdout"
   tags: superset
 
 - name: Create a Superset admin user
@@ -107,7 +111,9 @@
   become: yes
   become_user: "{{ app_user }}"
   environment: "{{ superset_environment }}"
-  shell: "{{ superset_virtualenv_dir }}/bin/superset init"
+  shell: "{{ superset_virtualenv_dir }}/bin/superset init && touch {{ superset_project_dir }}/.superset_init_complete"
+  args:
+    creates: "{{ superset_project_dir }}/.superset_init_complete"
   tags: superset
 
 # Supervisor files

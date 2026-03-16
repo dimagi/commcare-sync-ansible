@@ -8,6 +8,8 @@
   shell:
     cmd: "{{ ansible_env.HOME }}/.local/bin/uv sync --frozen --extra prod --extra postgres --extra mysql --extra odbc"
     chdir: "{{ src_dir }}"
+  args:
+    creates: "{{ virtualenv_dir }}/bin/activate"
   tags: deploy
 
 - name: Create the virtualenv postactivate script to set environment variables.
@@ -72,12 +74,14 @@
   become: yes
   become_user: "{{ app_user }}"
   command:
-    cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py migrate --database {{ item }}"
+    cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py migrate --database {{ item }} --no-input"
     chdir: "{{ src_dir }}"
   environment: "{{ app_environment }}"
   with_items:
     - default
   when: django_migrate is defined and django_migrate
+  register: django_migrate_result
+  changed_when: "'No migrations to apply' not in django_migrate_result.stdout"
   tags: deploy
 
 - name: Run Django collectstatic.
@@ -88,6 +92,8 @@
     chdir: "{{ src_dir }}"
   environment: "{{ app_environment }}"
   when: django_collectstatic is defined and django_collectstatic
+  register: django_collectstatic_result
+  changed_when: "'0 static files copied' not in django_collectstatic_result.stdout"
   tags: deploy
 
 
