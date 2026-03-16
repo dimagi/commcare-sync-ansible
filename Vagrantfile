@@ -15,7 +15,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "commcare_sync", primary: true do |obj|
     # Every Vagrant development environment requires a box. You can search for
     # boxes at https://atlas.hashicorp.com/search.
-    obj.vm.box = "bento/ubuntu-18.04"
+    obj.vm.box = "bento/ubuntu-24.04"
     obj.vm.hostname = "dev-commcare-sync"
     # obj.vm.boot_timeout = 600
     obj.vm.network "private_network", ip: "192.168.11.10"
