@@ -1,0 +1,22 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: ubuntu:24.04
+    pre_build_image: true
+provisioner:
+  name: ansible
+  env:
+    # workaround for molecule-docker 2.1.0 broken conditional with ansible-core 2.20+
+    # https://github.com/ansible-community/molecule-plugins/issues/294
+    ANSIBLE_ALLOW_BROKEN_CONDITIONALS: "true"
+    ANSIBLE_ROLES_PATH: "../../../../roles"
+  inventory:
+    group_vars:
+      all:
+        apt_update_cache: yes
+verifier:
+  name: ansible
