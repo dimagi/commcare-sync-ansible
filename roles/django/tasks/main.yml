@@ -115,7 +115,7 @@
     - django
 
 
-# Start scripts + Supervisor
+# Start scripts + systemd
 
 - name: Create the Gunicorn start script.
   template:
@@ -128,7 +128,7 @@
   tags:
     - deploy
     - django
-    - supervisor
+    - systemd
 
 - name: Create the Celery default start script.
   template:
@@ -141,39 +141,45 @@
   tags:
     - deploy
     - django
-    - supervisor
+    - systemd
 
-- name: Ensure the Supervisor service is running.
-  service:
-    name: supervisor
+- name: Create systemd service files.
+  template:
+    src: "systemd/{{ item }}.service.j2"
+    dest: /etc/systemd/system/{{ item }}.service
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - gunicorn
+    - celery
+  tags:
+    - deploy
+    - django
+    - systemd
+
+- name: Reload systemd daemon.
+  systemd:
+    daemon_reload: yes
+  tags:
+    - deploy
+    - django
+    - systemd
+
+- name: Enable and start systemd services.
+  systemd:
+    name: "{{ item }}"
     state: started
     enabled: yes
+  with_items:
+    - gunicorn
+    - celery
   tags:
     - deploy
     - django
-    - supervisor
+    - systemd
 
-- name: Create the Gunicorn Supervisor config file.
-  template:
-    src: gunicorn_supervisor_config.j2
-    dest: /etc/supervisor/conf.d/{{ app_name }}.conf
-    backup: yes
-  tags:
-    - deploy
-    - django
-    - supervisor
-
-- name: Create the Celery default Supervisor config file.
-  template:
-    src: celery_default_supervisor_config.j2
-    dest: /etc/supervisor/conf.d/{{ app_name }}_celery_default.conf
-    backup: yes
-  tags:
-    - deploy
-    - django
-    - supervisor
-
-- name: Create Supervisor log files.
+- name: Create log files.
   copy:
     content: ""
     dest: "{{ log_dir }}/{{ item }}"
@@ -188,28 +194,4 @@
   tags:
     - deploy
     - django
-    - supervisor
-
-- name: Re-read the Supervisor config files.
-  supervisorctl:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - "{{ app_name }}"
-    - "{{ app_name }}_celery_default"
-  tags:
-    - deploy
-    - django
-    - supervisor
-
-- name: Restart the Supervisor config files.
-  supervisorctl:
-    name: "{{ item }}"
-    state: restarted
-  with_items:
-    - "{{ app_name }}"
-    - "{{ app_name }}_celery_default"
-  tags:
-    - deploy
-    - django
-    - supervisor
+    - systemd

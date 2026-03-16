@@ -11,7 +11,7 @@ The following are installed by default.
 | Superset (optional)    | A BI tool                                                                  |
 | Redis                  | A message broker between CommCare Data Pipeline’s web and Celery processes |
 | nginx                  | A web server that sits in front of CommCare Data Pipeline and Superset     |
-| Supervisor             | Process management for CommCare Data Pipeline, Celery, and Superset        |
+| systemd                | Process management for CommCare Data Pipeline, Celery, and Superset        |
 
 > [!note]
 > Setting `superset_enabled: no` in your environment will prevent

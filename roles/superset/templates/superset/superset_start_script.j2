@@ -8,9 +8,9 @@ echo "Starting superset as `whoami`"
 # Set additional environment variables.
 . {{ superset_virtualenv_dir }}/bin/postactivate
 
-# Programs meant to be run under supervisor should not daemonize themselves
+# Programs meant to be run under systemd should not daemonize themselves
 # (do not use --daemon).
-gunicorn \
+exec gunicorn \
       -w 10 \
       -k gevent \
       --timeout 120 \

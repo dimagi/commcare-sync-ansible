@@ -135,9 +135,9 @@
     - deploy
     - superset
 
-# Supervisor files
+# systemd files
 
-- name: Create the Supervisor start script.
+- name: Create the systemd start script.
   template:
     src: superset/superset_start_script.j2
     dest: "{{ superset_virtualenv_dir }}/bin/superset_start"
@@ -148,18 +148,21 @@
   tags:
     - deploy
     - superset
+    - systemd
 
-- name: Create the Superset Supervisor config file.
+- name: Create the Superset systemd service file.
   template:
-    src: superset_supervisor_config.j2
-    dest: /etc/supervisor/conf.d/superset.conf
-    backup: yes
+    src: systemd/superset.service.j2
+    dest: /etc/systemd/system/superset.service
+    owner: root
+    group: root
+    mode: 0644
   tags:
     - deploy
     - superset
-    - yomo
+    - systemd
 
-- name: Create Supervisor log files.
+- name: Create log files.
   copy:
     content: ""
     dest: "{{ log_dir }}/{{ item }}"
@@ -168,30 +171,29 @@
     group: "{{ app_group }}"
     mode: 0644
   with_items:
-    - supervisor.log
+    - superset.log
   tags:
     - deploy
     - superset
+    - systemd
 
-- name: Re-read the Superset supervisor config files.
-  supervisorctl:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - superset
+- name: Reload systemd daemon.
+  systemd:
+    daemon_reload: yes
   tags:
     - deploy
     - superset
+    - systemd
 
-- name: Restart the Superset Supervisor process.
-  supervisorctl:
-    name: "{{ item }}"
-    state: restarted
-  with_items:
-    - superset
+- name: Enable and start Superset systemd service.
+  systemd:
+    name: superset
+    state: started
+    enabled: yes
   tags:
     - deploy
     - superset
+    - systemd
 
 
 - name: Create superset nginx config.
