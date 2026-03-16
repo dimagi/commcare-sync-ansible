@@ -122,14 +122,14 @@
 
 - name: Create the Gunicorn Supervisor config file.
   template:
-    src: django/gunicorn_supervisor_config.j2
+    src: gunicorn_supervisor_config.j2
     dest: /etc/supervisor/conf.d/{{ app_name }}.conf
     backup: yes
   tags: supervisor
 
 - name: Create the Celery default Supervisor config file.
   template:
-    src: django/celery_default_supervisor_config.j2
+    src: celery_default_supervisor_config.j2
     dest: /etc/supervisor/conf.d/{{ app_name }}_celery_default.conf
     backup: yes
   tags: supervisor
@@ -167,5 +167,3 @@
   tags:
     - deploy
     - supervisor
-
-...
