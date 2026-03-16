@@ -42,15 +42,6 @@ superset_email: superset-admin@example.com
 superset_password: "{{ vault_default_superset_password }}"
 superset_feature_flags: []
 
-postgresql_version: 18
-postgresql_user: postgres
-postgresql_allow_remote_connections: no
-
-default_db_name: "{{ app_name }}"
-default_db_user: "{{ app_name }}"
-default_db_password: "{{ vault_default_db_password }}"
-default_db_host: 127.0.0.1
-default_db_port: 5432
 
 django_settings_module: "{{ app_name }}.settings"
 django_secret_key: "{{ vault_django_secret_key }}"

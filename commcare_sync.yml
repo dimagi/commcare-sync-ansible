@@ -11,6 +11,7 @@
 
 
   roles:
+    - postgres
     - commcare_sync
 
 ...

@@ -85,11 +85,6 @@
   tags: deploy
 
 
-# Database
-
-- include_tasks: postgres.yml
-  tags: postgres
-
 
 # Redis
 
