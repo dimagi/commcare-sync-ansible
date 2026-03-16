@@ -96,11 +96,6 @@
     - supervisor
 
 
-# NGINX
-
-- include_tasks: nginx.yml
-  tags: nginx
-
 
 # Superset
 

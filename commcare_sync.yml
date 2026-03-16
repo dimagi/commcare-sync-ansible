@@ -13,6 +13,7 @@
   roles:
     - postgres
     - redis
+    - nginx
     - commcare_sync
 
 ...
