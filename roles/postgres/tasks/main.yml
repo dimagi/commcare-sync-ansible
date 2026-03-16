@@ -20,6 +20,7 @@
 
 - name: Set default locale.
   command: localectl set-locale LANG="en_US.UTF-8"
+  changed_when: false
 
 - name: Install PostgreSQL {{ postgresql_version }}.
   apt:
@@ -84,5 +85,3 @@
     template: 'template1'
     owner: "{{ default_db_user }}"
     state: present
-
-...
