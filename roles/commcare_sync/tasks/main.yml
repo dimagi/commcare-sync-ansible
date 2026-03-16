@@ -86,11 +86,6 @@
 
 
 
-# Redis
-
-- include_tasks: redis.yml
-  tags: redis
-
 
 # Django
 

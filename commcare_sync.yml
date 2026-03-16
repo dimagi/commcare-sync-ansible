@@ -12,6 +12,7 @@
 
   roles:
     - postgres
+    - redis
     - commcare_sync
 
 ...
