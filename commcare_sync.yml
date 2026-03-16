@@ -16,6 +16,7 @@
     - nginx
     - role: superset
       when: superset_enabled
+    - django
     - commcare_sync
 
 ...
