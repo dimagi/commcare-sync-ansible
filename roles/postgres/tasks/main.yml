@@ -28,8 +28,10 @@
     - postgres
 
 - name: Set default locale.
-  command: localectl set-locale LANG="en_US.UTF-8"
-  changed_when: false
+  copy:
+    dest: /etc/default/locale
+    content: 'LANG="en_US.UTF-8"'
+    mode: "0644"
   tags:
     - provision
     - postgres
