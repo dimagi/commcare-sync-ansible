@@ -11,7 +11,7 @@
   become: true
   tasks:
     - name: Install required system packages
-      apt:
+      ansible.builtin.apt:
         name:
           - python3-pip
           - python3-apt

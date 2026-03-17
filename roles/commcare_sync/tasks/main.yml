@@ -1,13 +1,13 @@
 ---
 
 - name: Test
-  command: echo it works!
+  ansible.builtin.command: echo it works!
   tags:
     - always
 
 # Swap
 
-- include_tasks: create_swap_file.yml
+- ansible.builtin.include_tasks: create_swap_file.yml
   when: swap_file_enabled
   tags:
     - provision
@@ -17,7 +17,7 @@
 # Packages
 
 - name: Install security updates.
-  apt:
+  ansible.builtin.apt:
     default_release: "{{ ansible_distribution_release }}-security"
     update_cache: "{{ apt_update_cache }}"
     upgrade: dist
@@ -29,7 +29,7 @@
   when: env != 'dev'
 
 - name: Install base packages.
-  apt:
+  ansible.builtin.apt:
     name:
       - locales
       - build-essential
@@ -53,7 +53,7 @@
 
 # Python
 
-- include_tasks: python.yml
+- ansible.builtin.include_tasks: python.yml
   tags:
     - provision
     - python
@@ -62,7 +62,7 @@
 # Users & Groups
 
 - name: Create the app group.
-  group:
+  ansible.builtin.group:
     name: "{{ app_group }}"
     system: yes
     state: present
@@ -71,7 +71,7 @@
     - users
 
 - name: Create the app user.
-  user:
+  ansible.builtin.user:
     name: "{{ app_user }}"
     group: "{{ app_group }}"
     shell: /bin/bash
@@ -81,35 +81,31 @@
     - users
 
 - name: Create {{ base_dir }} folder.
-  file:
+  ansible.builtin.file:
     path: "{{ base_dir }}"
     group: "{{ app_group }}"
-    mode: 0755
+    mode: "0755"
     state: directory
   tags:
     - provision
     - users
 
 - name: Create user .bash_aliases file.
-  template:
+  ansible.builtin.template:
     src: system/bash_aliases_script.sh.j2
     dest: "{{ home_dir }}/.bash_aliases"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0740
+    mode: "0740"
     backup: yes
   tags:
     - deploy
     - users
 
 
-
-
-
-
 # logging
 
-- include_tasks: logrotate.yml
+- ansible.builtin.include_tasks: logrotate.yml
   tags:
     - provision
     - logging

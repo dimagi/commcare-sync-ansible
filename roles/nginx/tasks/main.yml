@@ -3,7 +3,7 @@
 # NGINX
 
 - name: Install NGINX.
-  apt:
+  ansible.builtin.apt:
     name: nginx
     update_cache: "{{ apt_update_cache }}"
     state: present
@@ -13,7 +13,7 @@
     - nginx
 
 - name: Start NGINX.
-  service:
+  ansible.builtin.service:
     name: nginx
     enabled: yes
     state: started
@@ -22,7 +22,7 @@
     - nginx
 
 - name: Adding 'www-data' user to {{ app_group }} group.
-  user:
+  ansible.builtin.user:
     name: www-data
     groups: "{{ app_group }}"
     append: yes
@@ -31,7 +31,7 @@
     - nginx
 
 - name: Create {{ app_name }} {{ env }} nginx config.
-  template:
+  ansible.builtin.template:
     src: nginx/gunicorn_nginx_without_ssl_config.j2
     dest: /etc/nginx/sites-available/{{ project_name }}.conf
     backup: yes
@@ -42,7 +42,7 @@
     - nginx
 
 - name: Enable {{ app_name }} nginx config.
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/{{ project_name }}.conf
     dest: /etc/nginx/sites-enabled/{{ project_name }}.conf
     state: link
@@ -53,7 +53,7 @@
     - nginx
 
 - name: Disable default nginx config.
-  file:
+  ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
   notify: Reload nginx

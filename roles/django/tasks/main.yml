@@ -5,7 +5,7 @@
 - name: Sync virtualenv.
   become: yes
   become_user: "{{ app_user }}"
-  shell:
+  ansible.builtin.shell:
     cmd: "{{ ansible_env.HOME }}/.local/bin/uv sync --frozen --extra prod --extra postgres --extra mysql --extra odbc"
     chdir: "{{ src_dir }}"
   args:
@@ -15,12 +15,12 @@
     - django
 
 - name: Create the virtualenv postactivate script to set environment variables.
-  template:
+  ansible.builtin.template:
     src: django/virtualenv_postactivate_script.sh.j2
     dest: "{{ virtualenv_dir }}/bin/postactivate"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0750
+    mode: "0750"
     backup: yes
   tags:
     - deploy
@@ -30,11 +30,11 @@
 # Source
 
 - name: Create {{ project_dir }}.
-  file:
+  ansible.builtin.file:
     path: "{{ project_dir }}"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0750
+    mode: "0750"
     state: directory
   tags:
     - deploy
@@ -43,7 +43,7 @@
 - name: Pull latest source code.
   become: yes
   become_user: "{{ app_user }}"
-  git:
+  ansible.builtin.git:
     repo: https://github.com/dimagi/commcare-sync.git
     dest: "{{ src_dir }}"
     version: master
@@ -54,11 +54,11 @@
     - django
 
 - name: Create the app folders.
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0750
+    mode: "0750"
     state: directory
   with_items:
     - "{{ log_dir }}"
@@ -73,12 +73,12 @@
 # Django
 
 - name: Create the local settings file
-  template:
+  ansible.builtin.template:
     src: django/settings_local.py.j2
     dest: "{{ src_dir }}/{{ app_name }}/settings_local.py"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0640
+    mode: "0640"
     backup: yes
   tags:
     - deploy
@@ -87,7 +87,7 @@
 - name: Run Django database migrations.
   become: yes
   become_user: "{{ app_user }}"
-  command:
+  ansible.builtin.command:
     cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py migrate --database {{ item }} --no-input"
     chdir: "{{ src_dir }}"
   environment: "{{ app_environment }}"
@@ -103,7 +103,7 @@
 - name: Run Django collectstatic.
   become: yes
   become_user: "{{ app_user }}"
-  command:
+  ansible.builtin.command:
     cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py collectstatic --no-input"
     chdir: "{{ src_dir }}"
   environment: "{{ app_environment }}"
@@ -118,12 +118,12 @@
 # Start scripts + systemd
 
 - name: Create the Gunicorn start script.
-  template:
+  ansible.builtin.template:
     src: django/gunicorn_start_script.j2
     dest: "{{ virtualenv_dir }}/bin/gunicorn_start"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0750
+    mode: "0750"
     backup: yes
   tags:
     - deploy
@@ -131,12 +131,12 @@
     - systemd
 
 - name: Create the Celery default start script.
-  template:
+  ansible.builtin.template:
     src: django/celery_default_start_script.j2
     dest: "{{ virtualenv_dir }}/bin/celery_default_start"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0750
+    mode: "0750"
     backup: yes
   tags:
     - deploy
@@ -144,12 +144,12 @@
     - systemd
 
 - name: Create systemd service files.
-  template:
+  ansible.builtin.template:
     src: "systemd/{{ item }}.service.j2"
     dest: /etc/systemd/system/{{ item }}.service
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   with_items:
     - gunicorn
     - celery
@@ -159,7 +159,7 @@
     - systemd
 
 - name: Reload systemd daemon.
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: yes
   tags:
     - deploy
@@ -167,7 +167,7 @@
     - systemd
 
 - name: Enable and start systemd services.
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ item }}"
     state: started
     enabled: yes
@@ -180,13 +180,13 @@
     - systemd
 
 - name: Create log files.
-  copy:
+  ansible.builtin.copy:
     content: ""
     dest: "{{ log_dir }}/{{ item }}"
     force: no
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0644
+    mode: "0644"
   with_items:
     - celery.log
     - gunicorn.log

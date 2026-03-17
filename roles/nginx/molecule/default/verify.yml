@@ -4,22 +4,22 @@
   become: true
   tasks:
     - name: Check if Nginx is running
-      command: pgrep nginx
+      ansible.builtin.command: pgrep nginx
       register: nginx_process
       changed_when: false
 
     - name: Assert Nginx process is running
-      assert:
+      ansible.builtin.assert:
         that: nginx_process.rc == 0
         fail_msg: "Nginx process is not running"
 
     - name: Check if Nginx is listening on port 80
-      wait_for:
+      ansible.builtin.wait_for:
         port: 80
         timeout: 5
       register: nginx_port
 
     - name: Assert Nginx is listening
-      assert:
+      ansible.builtin.assert:
         that: nginx_port.state == 'started'
         fail_msg: "Nginx is not listening on port 80"

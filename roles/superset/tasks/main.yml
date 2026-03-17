@@ -2,10 +2,10 @@
 
 # Database
 
-- name: Ensure the superset  database is created.
+- name: Ensure the superset database is created.
   become: yes
   become_user: "{{ postgresql_user }}"
-  postgresql_db:
+  community.postgresql.postgresql_db:
     name: "{{ superset_db_name }}"
     encoding: 'UTF-8'
     lc_collate: 'en_US.UTF-8'
@@ -19,7 +19,7 @@
 - name: Ensure the default user has access to the database.
   become: yes
   become_user: "{{ postgresql_user }}"
-  postgresql_user:
+  community.postgresql.postgresql_user:
     db: "{{ superset_db_name }}"
     name: "{{ default_db_user }}"
     password: "{{ default_db_password }}"
@@ -34,7 +34,7 @@
 # Virtualenv
 
 - name: Create the superset virtualenv.
-  command: virtualenv -p {{ virtualenv_python_version }} {{ superset_virtualenv_dir }}
+  ansible.builtin.command: virtualenv -p {{ virtualenv_python_version }} {{ superset_virtualenv_dir }}
   args:
     creates: "{{ superset_virtualenv_dir }}/bin/activate"
   tags:
@@ -42,7 +42,7 @@
     - superset
 
 - name: Change ownership of superset virtualenv.
-  file:
+  ansible.builtin.file:
     dest: "{{ superset_virtualenv_dir }}"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
@@ -52,19 +52,19 @@
     - superset
 
 - name: Create the virtualenv postactivate script to set environment variables.
-  template:
+  ansible.builtin.template:
     src: superset/superset_postactivate_script.sh.j2
     dest: "{{ superset_virtualenv_dir }}/bin/postactivate"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0750
+    mode: "0750"
     backup: yes
   tags:
     - deploy
     - superset
 
 - name: Install packages required by Superset in the virtualenv.
-  pip:
+  ansible.builtin.pip:
     virtualenv: "{{ superset_virtualenv_dir }}"
     name:
       - apache-superset
@@ -79,23 +79,23 @@
 # Create config directory and files
 
 - name: Create {{ superset_project_dir }}.
-  file:
+  ansible.builtin.file:
     path: "{{ superset_project_dir }}"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0750
+    mode: "0750"
     state: directory
   tags:
     - deploy
     - superset
 
 - name: Create the superset_config.py file
-  template:
+  ansible.builtin.template:
     src: superset/superset_config.py.j2
     dest: "{{ superset_project_dir }}/superset_config.py"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0640
+    mode: "0640"
     backup: yes
   tags:
     - deploy
@@ -106,7 +106,7 @@
   become: yes
   become_user: "{{ app_user }}"
   environment: "{{ superset_environment }}"
-  shell: "{{ superset_virtualenv_dir }}/bin/superset db upgrade"
+  ansible.builtin.shell: "{{ superset_virtualenv_dir }}/bin/superset db upgrade"
   register: superset_migrate_result
   changed_when: "'Already up to date' not in superset_migrate_result.stdout"
   tags:
@@ -116,19 +116,24 @@
 - name: Create a Superset admin user
   become: yes
   become_user: "{{ app_user }}"
-  shell: "{{ superset_virtualenv_dir }}/bin/flask fab create-admin --username {{ superset_username }} --firstname {{ superset_firstname }} \
-            --lastname {{ superset_lastname }}  --email {{ superset_email }} --password '{{ superset_password }}'"
+  ansible.builtin.shell: >-
+    {{ superset_virtualenv_dir }}/bin/flask fab create-admin
+    --username {{ superset_username }}
+    --firstname {{ superset_firstname }}
+    --lastname {{ superset_lastname }}
+    --email {{ superset_email }}
+    --password '{{ superset_password }}'
   environment: "{{ superset_environment }}"
   tags:
-   - deploy
-   - superset
-   - superset-admin
+    - deploy
+    - superset
+    - superset-admin
 
 - name: Run Superset initialization.
   become: yes
   become_user: "{{ app_user }}"
   environment: "{{ superset_environment }}"
-  shell: "{{ superset_virtualenv_dir }}/bin/superset init && touch {{ superset_project_dir }}/.superset_init_complete"
+  ansible.builtin.shell: "{{ superset_virtualenv_dir }}/bin/superset init && touch {{ superset_project_dir }}/.superset_init_complete"
   args:
     creates: "{{ superset_project_dir }}/.superset_init_complete"
   tags:
@@ -138,12 +143,12 @@
 # systemd files
 
 - name: Create the systemd start script.
-  template:
+  ansible.builtin.template:
     src: superset/superset_start_script.j2
     dest: "{{ superset_virtualenv_dir }}/bin/superset_start"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0750
+    mode: "0750"
     backup: yes
   tags:
     - deploy
@@ -151,25 +156,25 @@
     - systemd
 
 - name: Create the Superset systemd service file.
-  template:
+  ansible.builtin.template:
     src: systemd/superset.service.j2
     dest: /etc/systemd/system/superset.service
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags:
     - deploy
     - superset
     - systemd
 
 - name: Create log files.
-  copy:
+  ansible.builtin.copy:
     content: ""
     dest: "{{ log_dir }}/{{ item }}"
     force: no
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0644
+    mode: "0644"
   with_items:
     - superset.log
   tags:
@@ -178,7 +183,7 @@
     - systemd
 
 - name: Reload systemd daemon.
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: yes
   tags:
     - deploy
@@ -186,7 +191,7 @@
     - systemd
 
 - name: Enable and start Superset systemd service.
-  systemd:
+  ansible.builtin.systemd:
     name: superset
     state: started
     enabled: yes
@@ -197,7 +202,7 @@
 
 
 - name: Create superset nginx config.
-  template:
+  ansible.builtin.template:
     src: nginx/superset_nginx_without_ssl_config.j2
     dest: /etc/nginx/sites-available/superset.conf
     backup: yes
@@ -208,7 +213,7 @@
     - nginx
 
 - name: Enable superset nginx config.
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/superset.conf
     dest: /etc/nginx/sites-enabled/superset.conf
     state: link
@@ -219,7 +224,7 @@
     - nginx
 
 - name: Test & reload nginx config.
-  shell: nginx -t && nginx -s reload
+  ansible.builtin.shell: nginx -t && nginx -s reload
   tags:
     - deploy
     - superset
