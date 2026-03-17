@@ -3,17 +3,17 @@
 ansible_python_interpreter: /usr/bin/python3
 base_python_package: "python3"
 
-apt_update_cache: yes
+apt_update_cache: true
 
-swap_file_enabled: no
+swap_file_enabled: false
 swap_file: /swapfile
 swap_file_size_kb: 512
 
-ssl_enabled: no
+ssl_enabled: false
 
 superset_secret_key: "{{ vault_superset_secret_key }}"
 
-certbot_auto_renew: yes
+certbot_auto_renew: true
 
 certbot_script: /opt/certbot-auto
 certbot_dir: /etc/letsencrypt
@@ -21,5 +21,3 @@ certbot_admin_email: admin@example.com
 certbot_domains:
   - example.com
   - www.example.com
-
-...

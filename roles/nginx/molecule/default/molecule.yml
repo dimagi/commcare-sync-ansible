@@ -17,12 +17,12 @@ provisioner:
   inventory:
     group_vars:
       all:
-        apt_update_cache: yes
+        apt_update_cache: true
         app_name: commcare_sync
         app_user: commcare_sync
         app_group: webapps
         project_name: commcare-sync
-        ssl_enabled: no
+        ssl_enabled: false
         env: test
         home_dir: /home/commcare_sync
         base_dir: /home/commcare_sync/www

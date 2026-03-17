@@ -2,7 +2,7 @@
 
 postgresql_version: 18
 postgresql_user: postgres
-postgresql_allow_remote_connections: no
+postgresql_allow_remote_connections: false
 
 default_db_name: "{{ app_name }}"
 default_db_user: "{{ app_name }}"

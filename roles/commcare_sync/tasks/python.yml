@@ -1,12 +1,13 @@
 ---
-
 - name: Install uv using standalone installer
-  become: yes
+  become: true
   become_user: "{{ app_user }}"
-  ansible.builtin.shell:
-    cmd: curl -LsSf https://astral.sh/uv/install.sh | sh
+  ansible.builtin.shell: # noqa: command-instead-of-module
+    cmd: set -o pipefail && curl -LsSf https://astral.sh/uv/install.sh | sh
     chdir: "{{ ansible_env.HOME }}"
+    executable: /bin/bash
   args:
     creates: "{{ ansible_env.HOME }}/.local/bin/uv"
   environment:
     UV_INSTALL_DIR: "{{ ansible_env.HOME }}/.local/bin"
+  changed_when: false

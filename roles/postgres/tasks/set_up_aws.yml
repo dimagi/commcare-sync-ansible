@@ -8,9 +8,9 @@
     - postgres_backup
 
 - name: Create aws config directory for {{ postgresql_user }}
-  become: yes
+  become: true
   ansible.builtin.file:
-    path: '{{ postgresql_user_home_dir }}/.aws'
+    path: "{{ postgresql_user_home_dir }}/.aws"
     owner: "{{ postgresql_user }}"
     group: "{{ postgresql_user }}"
     mode: "0700"
@@ -20,14 +20,14 @@
     - postgres_backup
 
 - name: Set up ~/.aws/credentials for {{ postgresql_user }}
-  become: yes
+  become: true
   ansible.builtin.template:
     src: "system/aws_credentials.j2"
     dest: "{{ postgresql_user_home_dir }}/.aws/credentials"
     group: "{{ postgresql_user }}"
     owner: "{{ postgresql_user }}"
     mode: "0700"
-    backup: yes
+    backup: true
   tags:
     - aws_setup
     - postgres_backup

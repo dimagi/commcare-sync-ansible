@@ -1,11 +1,12 @@
 ---
-- ansible.builtin.include_tasks: set_up_aws.yml
+- name: Include AWS setup tasks
+  ansible.builtin.include_tasks: set_up_aws.yml
   tags:
     - postgres_backup
     - aws_setup
 
 - name: Copy postgres credentials
-  become: yes
+  become: true
   ansible.builtin.template:
     src: "postgres/pgpass.j2"
     dest: "{{ postgresql_user_home_dir }}/.pgpass"
@@ -16,7 +17,7 @@
     - postgres_backup
 
 - name: Copy postgres backup script
-  become: yes
+  become: true
   ansible.builtin.template:
     src: postgres/create_postgres_dump.sh.j2
     dest: /usr/local/bin/create_postgres_dump.sh
@@ -27,7 +28,7 @@
     - postgres_backup
 
 - name: Create Weekly Cron job
-  become: yes
+  become: true
   ansible.builtin.cron:
     name: "Backup Postgres Weekly"
     job: "bash /usr/local/bin/create_postgres_dump.sh"

@@ -1,3 +1,4 @@
+---
 - name: Configure logrotate for CommCare Data Pipeline logs
   community.general.logrotate:
     name: commcare-sync

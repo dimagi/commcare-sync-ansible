@@ -1,13 +1,14 @@
 ---
-
 - name: Test
   ansible.builtin.command: echo it works!
+  changed_when: false
   tags:
     - always
 
 # Swap
 
-- ansible.builtin.include_tasks: create_swap_file.yml
+- name: Include swap file tasks
+  ansible.builtin.include_tasks: create_swap_file.yml
   when: swap_file_enabled
   tags:
     - provision
@@ -53,7 +54,8 @@
 
 # Python
 
-- ansible.builtin.include_tasks: python.yml
+- name: Include python tasks
+  ansible.builtin.include_tasks: python.yml
   tags:
     - provision
     - python
@@ -64,7 +66,7 @@
 - name: Create the app group.
   ansible.builtin.group:
     name: "{{ app_group }}"
-    system: yes
+    system: true
     state: present
   tags:
     - provision
@@ -80,7 +82,7 @@
     - provision
     - users
 
-- name: Create {{ base_dir }} folder.
+- name: Create application base directory.
   ansible.builtin.file:
     path: "{{ base_dir }}"
     group: "{{ app_group }}"
@@ -97,7 +99,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: "0740"
-    backup: yes
+    backup: true
   tags:
     - deploy
     - users
@@ -105,9 +107,8 @@
 
 # logging
 
-- ansible.builtin.include_tasks: logrotate.yml
+- name: Include logrotate tasks
+  ansible.builtin.include_tasks: logrotate.yml
   tags:
     - provision
     - logging
-
-...

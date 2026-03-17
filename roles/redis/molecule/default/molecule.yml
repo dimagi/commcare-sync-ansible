@@ -17,6 +17,6 @@ provisioner:
   inventory:
     group_vars:
       all:
-        apt_update_cache: yes
+        apt_update_cache: true
 verifier:
   name: ansible

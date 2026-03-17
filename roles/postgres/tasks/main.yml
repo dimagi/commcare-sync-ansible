@@ -1,5 +1,4 @@
 ---
-
 - name: Add the PostgreSQL repository key to the apt trusted keys.
   ansible.builtin.apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -11,7 +10,7 @@
 
 - name: Add the PostgreSQL repository to the apt sources list.
   ansible.builtin.apt_repository:
-    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
     update_cache: "{{ apt_update_cache }}"
     state: present
     filename: postgres
@@ -50,7 +49,7 @@
     - postgres
 
 - name: Create PostgreSQL cluster
-  become: yes
+  become: true
   become_user: "{{ postgresql_user }}"
   ansible.builtin.command: "pg_createcluster -u {{ postgresql_user }} --no-status {{ postgresql_version }} main"
   args:
@@ -60,7 +59,7 @@
     - postgres
 
 - name: Create PostgreSQL config
-  become: yes
+  become: true
   become_user: "{{ postgresql_user }}"
   ansible.builtin.template:
     src: postgres/postgresql.conf.j2
@@ -72,7 +71,7 @@
     - postgres
 
 - name: Create PostgreSQL ACL
-  become: yes
+  become: true
   become_user: "{{ postgresql_user }}"
   ansible.builtin.template:
     src: postgres/pg_hba.conf.j2
@@ -87,40 +86,41 @@
   ansible.builtin.service:
     name: postgresql
     state: started
-    enabled: yes
+    enabled: true
   tags:
     - provision
     - postgres
 
 - name: Ensure the default user exists.
-  become: yes
+  become: true
   become_user: "{{ postgresql_user }}"
   community.postgresql.postgresql_user:
     name: "{{ default_db_user }}"
     password: "{{ default_db_password }}"
     role_attr_flags: NOSUPERUSER,CREATEDB
-    encrypted: yes
+    encrypted: true
     state: present
   tags:
     - provision
     - postgres
 
 - name: Ensure the default database exists.
-  become: yes
+  become: true
   become_user: "{{ postgresql_user }}"
   community.postgresql.postgresql_db:
     name: "{{ default_db_name }}"
-    encoding: 'UTF-8'
-    lc_collate: 'en_US.UTF-8'
-    lc_ctype: 'en_US.UTF-8'
-    template: 'template1'
+    encoding: "UTF-8"
+    lc_collate: "en_US.UTF-8"
+    lc_ctype: "en_US.UTF-8"
+    template: "template1"
     owner: "{{ default_db_user }}"
     state: present
   tags:
     - provision
     - postgres
 
-- ansible.builtin.include_tasks: pg_backup.yml
+- name: Include postgres backup tasks
+  ansible.builtin.include_tasks: pg_backup.yml
   tags:
     - provision
     - postgres_backup

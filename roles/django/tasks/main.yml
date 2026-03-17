@@ -1,11 +1,10 @@
 ---
-
 # Virtualenv
 
 - name: Sync virtualenv.
-  become: yes
+  become: true
   become_user: "{{ app_user }}"
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: "{{ ansible_env.HOME }}/.local/bin/uv sync --frozen --extra prod --extra postgres --extra mysql --extra odbc"
     chdir: "{{ src_dir }}"
   args:
@@ -21,11 +20,10 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: "0750"
-    backup: yes
+    backup: true
   tags:
     - deploy
     - django
-
 
 # Source
 
@@ -41,14 +39,14 @@
     - django
 
 - name: Pull latest source code.
-  become: yes
+  become: true
   become_user: "{{ app_user }}"
   ansible.builtin.git:
     repo: https://github.com/dimagi/commcare-sync.git
     dest: "{{ src_dir }}"
     version: master
-    recursive: no
-    accept_hostkey: yes
+    recursive: false
+    accept_hostkey: true
   tags:
     - deploy
     - django
@@ -69,7 +67,6 @@
     - deploy
     - django
 
-
 # Django
 
 - name: Create the local settings file
@@ -79,13 +76,13 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: "0640"
-    backup: yes
+    backup: true
   tags:
     - deploy
     - django
 
 - name: Run Django database migrations.
-  become: yes
+  become: true
   become_user: "{{ app_user }}"
   ansible.builtin.command:
     cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py migrate --database {{ item }} --no-input"
@@ -101,7 +98,7 @@
     - django
 
 - name: Run Django collectstatic.
-  become: yes
+  become: true
   become_user: "{{ app_user }}"
   ansible.builtin.command:
     cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py collectstatic --no-input"
@@ -114,7 +111,6 @@
     - deploy
     - django
 
-
 # Start scripts + systemd
 
 - name: Create the Gunicorn start script.
@@ -124,7 +120,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: "0750"
-    backup: yes
+    backup: true
   tags:
     - deploy
     - django
@@ -137,7 +133,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: "0750"
-    backup: yes
+    backup: true
   tags:
     - deploy
     - django
@@ -160,7 +156,7 @@
 
 - name: Reload systemd daemon.
   ansible.builtin.systemd:
-    daemon_reload: yes
+    daemon_reload: true
   tags:
     - deploy
     - django
@@ -170,7 +166,7 @@
   ansible.builtin.systemd:
     name: "{{ item }}"
     state: started
-    enabled: yes
+    enabled: true
   with_items:
     - gunicorn
     - celery
@@ -183,7 +179,7 @@
   ansible.builtin.copy:
     content: ""
     dest: "{{ log_dir }}/{{ item }}"
-    force: no
+    force: false
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: "0644"

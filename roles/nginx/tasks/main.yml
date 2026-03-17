@@ -1,5 +1,4 @@
 ---
-
 # NGINX
 
 - name: Install NGINX.
@@ -15,33 +14,34 @@
 - name: Start NGINX.
   ansible.builtin.service:
     name: nginx
-    enabled: yes
+    enabled: true
     state: started
   tags:
     - provision
     - nginx
 
-- name: Adding 'www-data' user to {{ app_group }} group.
+- name: Add www-data user to app group.
   ansible.builtin.user:
     name: www-data
     groups: "{{ app_group }}"
-    append: yes
+    append: true
   tags:
     - provision
     - nginx
 
-- name: Create {{ app_name }} {{ env }} nginx config.
+- name: Create nginx config.
   ansible.builtin.template:
     src: nginx/gunicorn_nginx_without_ssl_config.j2
     dest: /etc/nginx/sites-available/{{ project_name }}.conf
-    backup: yes
+    mode: "0644"
+    backup: true
   when: "not ssl_enabled"
   notify: Reload nginx
   tags:
     - provision
     - nginx
 
-- name: Enable {{ app_name }} nginx config.
+- name: Enable nginx config.
   ansible.builtin.file:
     src: /etc/nginx/sites-available/{{ project_name }}.conf
     dest: /etc/nginx/sites-enabled/{{ project_name }}.conf

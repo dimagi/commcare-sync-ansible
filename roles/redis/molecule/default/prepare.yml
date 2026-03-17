@@ -5,3 +5,4 @@
   tasks:
     - name: Install sudo
       ansible.builtin.raw: apt-get update && apt-get install -y sudo python3
+      changed_when: false

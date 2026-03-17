@@ -5,7 +5,7 @@ app_user: "{{ app_name }}"
 home_dir: /home/{{ app_user }}
 app_group: webapps
 project_name: commcare-sync
-base_dir: "{{home_dir}}/www"
+base_dir: "{{ home_dir }}/www"
 project_dir: "{{ base_dir }}/{{ project_name }}"
 src_dir: "{{ base_dir }}/{{ project_name }}/code_root"
 virtualenv_dir: "{{ src_dir }}/.venv"
@@ -14,14 +14,14 @@ log_dir: "{{ base_dir }}/log"
 static_dir: "{{ src_dir }}/static_root"
 media_dir: "{{ src_dir }}/media"
 
-commcare_sync_export_periodicity: 43200  # 60 * 60 * 12 = every 12 hours
-project_timezone: 'America/New_York'
-commcare_default_server: 'https://www.commcarehq.org'
+commcare_sync_export_periodicity: 43200 # 60 * 60 * 12 = every 12 hours
+project_timezone: "America/New_York"
+commcare_default_server: "https://www.commcarehq.org"
 
 django_settings_module: "{{ app_name }}.settings"
 django_secret_key: "{{ vault_django_secret_key }}"
 django_fernet_keys: "{{ vault_django_fernet_keys }}"
-django_allow_public_signups: no
+django_allow_public_signups: false
 django_migrate: true
 django_collectstatic: true
 

@@ -2,19 +2,17 @@
 
 public_host: 192.168.11.10
 
-superset_enabled: yes
-superset_public_host: superset.vagrant.local  # this needs to be manually mapped to 192.168.11.10 in /etc/hosts
+superset_enabled: true
+superset_public_host: superset.vagrant.local # this needs to be manually mapped to 192.168.11.10 in /etc/hosts
 superset_feature_flags: []
-
 app_user: "{{ ansible_user }}"
 
-django_allow_public_signups: no
+django_allow_public_signups: false
 
 # These variables are encrypted and stored in an ansible vault:
 vault_default_db_password: <secret1>
 vault_default_superset_password: <secret2>
 vault_mapbox_api_key: <secret3>
 vault_django_secret_key: <secret4>
-vault_django_fernet_keys: '["<secret5>"]'  # JSON-formatted list
+vault_django_fernet_keys: '["<secret5>"]' # JSON-formatted list
 vault_superset_secret_key: <secret6>
-...
