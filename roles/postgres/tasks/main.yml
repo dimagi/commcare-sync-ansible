@@ -65,7 +65,7 @@
     src: postgres/postgresql.conf.j2
     dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
     mode: "0640"
-  notify: restart postgresql
+  notify: Restart postgresql
   tags:
     - provision
     - postgres
@@ -77,7 +77,7 @@
     src: postgres/pg_hba.conf.j2
     dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
     mode: "0640"
-  notify: restart postgresql
+  notify: Restart postgresql
   tags:
     - provision
     - postgres
