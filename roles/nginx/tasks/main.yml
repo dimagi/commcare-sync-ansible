@@ -1,0 +1,62 @@
+---
+# NGINX
+
+- name: Install NGINX.
+  ansible.builtin.apt:
+    name: nginx
+    update_cache: "{{ apt_update_cache }}"
+    state: present
+  tags:
+    - provision
+    - packages
+    - nginx
+
+- name: Start NGINX.
+  ansible.builtin.service:
+    name: nginx
+    enabled: true
+    state: started
+  tags:
+    - provision
+    - nginx
+
+- name: Add www-data user to app group.
+  ansible.builtin.user:
+    name: www-data
+    groups: "{{ app_group }}"
+    append: true
+  tags:
+    - provision
+    - nginx
+
+- name: Create nginx config.
+  ansible.builtin.template:
+    src: nginx/gunicorn_nginx_without_ssl_config.j2
+    dest: /etc/nginx/sites-available/{{ project_name }}.conf
+    mode: "0644"
+    backup: true
+  when: "not ssl_enabled"
+  notify: Reload nginx
+  tags:
+    - provision
+    - nginx
+
+- name: Enable nginx config.
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/{{ project_name }}.conf
+    dest: /etc/nginx/sites-enabled/{{ project_name }}.conf
+    state: link
+  when: "not ssl_enabled"
+  notify: Reload nginx
+  tags:
+    - provision
+    - nginx
+
+- name: Disable default nginx config.
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload nginx
+  tags:
+    - provision
+    - nginx

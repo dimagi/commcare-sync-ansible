@@ -1,0 +1,25 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Check if PostgreSQL is running
+      ansible.builtin.command: pgrep postgres
+      register: postgres_process
+      changed_when: false
+
+    - name: Assert PostgreSQL process is running
+      ansible.builtin.assert:
+        that: postgres_process.rc == 0
+        fail_msg: "PostgreSQL process is not running"
+
+    - name: Check if PostgreSQL is listening on port 5432
+      ansible.builtin.wait_for:
+        port: 5432
+        timeout: 5
+      register: postgres_port
+
+    - name: Assert PostgreSQL is listening
+      ansible.builtin.assert:
+        that: postgres_port.state == 'started'
+        fail_msg: "PostgreSQL is not listening on port 5432"

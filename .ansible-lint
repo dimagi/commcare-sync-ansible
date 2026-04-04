@@ -1,0 +1,15 @@
+---
+profile: production
+
+exclude_paths:
+  - .venv/
+
+warn_list:
+  - experimental
+
+# skip_list entries require a justification comment
+skip_list:
+  # These variables are intentionally shared across multiple roles as project-level
+  # variables — renaming them to per-role prefixes would be a backwards-incompatible
+  # change affecting all inventories.
+  - var-naming[no-role-prefix]

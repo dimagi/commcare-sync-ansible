@@ -47,7 +47,7 @@ createdb -U commcare_sync -h localhost -p 5432 superset
 ```
 
 If you get errors about active connections when dropping databases try stopping all processes 
-with `supervisorctl stop all` and killing any other active connections in a `psql` shell with something like the below:
+by stopping all services with `sudo systemctl stop gunicorn celery superset` and killing any other active connections in a `psql` shell with something like the below:
 
 ```
 SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'superset' AND pid <> pg_backend_pid();

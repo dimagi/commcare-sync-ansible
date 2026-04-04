@@ -1,30 +1,36 @@
 ---
-
 - name: Test
-  command: echo it works!
+  ansible.builtin.command: echo it works!
+  changed_when: false
+  tags:
+    - always
 
 # Swap
 
-- include_tasks: create_swap_file.yml
+- name: Include swap file tasks
+  ansible.builtin.include_tasks: create_swap_file.yml
   when: swap_file_enabled
-  tags: swap
+  tags:
+    - provision
+    - swap
 
 
 # Packages
 
 - name: Install security updates.
-  apt:
+  ansible.builtin.apt:
     default_release: "{{ ansible_distribution_release }}-security"
     update_cache: "{{ apt_update_cache }}"
     upgrade: dist
   tags:
+    - provision
     - packages
     - packages.security
     - skip_ansible_lint
   when: env != 'dev'
 
 - name: Install base packages.
-  apt:
+  ansible.builtin.apt:
     name:
       - locales
       - build-essential
@@ -37,97 +43,72 @@
       - curl
       - "{{ base_python_package }}-pip"
       - "i{{ base_python_package }}"
-      - supervisor
       - libpq-dev
     update_cache: "{{ apt_update_cache }}"
     state: present
   tags:
+    - provision
     - packages
     - skip_ansible_lint
 
 
 # Python
 
-- include_tasks: python.yml
-  tags: python
+- name: Include python tasks
+  ansible.builtin.include_tasks: python.yml
+  tags:
+    - provision
+    - python
 
 
 # Users & Groups
 
 - name: Create the app group.
-  group:
+  ansible.builtin.group:
     name: "{{ app_group }}"
-    system: yes
+    system: true
     state: present
+  tags:
+    - provision
+    - users
 
 - name: Create the app user.
-  user:
+  ansible.builtin.user:
     name: "{{ app_user }}"
     group: "{{ app_group }}"
     shell: /bin/bash
     state: present
+  tags:
+    - provision
+    - users
 
-- name: Create {{ base_dir }} folder.
-  file:
+- name: Create application base directory.
+  ansible.builtin.file:
     path: "{{ base_dir }}"
     group: "{{ app_group }}"
-    mode: 0755
+    mode: "0755"
     state: directory
+  tags:
+    - provision
+    - users
 
 - name: Create user .bash_aliases file.
-  template:
+  ansible.builtin.template:
     src: system/bash_aliases_script.sh.j2
     dest: "{{ home_dir }}/.bash_aliases"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
-    mode: 0740
-    backup: yes
-  tags: deploy
-
-
-# Database
-
-- include_tasks: postgres.yml
-  tags: postgres
-
-
-# Redis
-
-- include_tasks: redis.yml
-  tags: redis
-
-
-# Django
-
-- include_tasks: django.yml
+    mode: "0740"
+    backup: true
   tags:
-    - django
     - deploy
-    - supervisor
+    - users
 
-
-# NGINX
-
-- include_tasks: nginx.yml
-  tags: nginx
-
-
-# Superset
-
-- include_tasks: superset.yml
-  when: superset_enabled
-  tags:
-    - superset
-    - superset-admin
-    - yomo
 
 # logging
 
-- include_tasks: logrotate.yml
-  tags: logging
-
-- include_tasks: pg_backup.yml
-  tags: postgres_backup
-  when: postgresql_backup_enabled
-
-...
+- name: Include logrotate tasks
+  ansible.builtin.include_tasks: logrotate.yml
+  tags:
+    - provision
+    - logging

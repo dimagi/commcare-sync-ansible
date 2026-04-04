@@ -1,0 +1,19 @@
+---
+- name: Install Redis
+  ansible.builtin.apt:
+    name: redis-server
+    update_cache: "{{ apt_update_cache }}"
+    state: present
+  tags:
+    - provision
+    - packages
+    - redis
+
+- name: Ensure Redis is running
+  ansible.builtin.service:
+    name: redis-server
+    state: started
+    enabled: true
+  tags:
+    - provision
+    - redis

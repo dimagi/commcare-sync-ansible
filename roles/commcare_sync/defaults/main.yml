@@ -3,95 +3,21 @@
 ansible_python_interpreter: /usr/bin/python3
 base_python_package: "python3"
 
-apt_update_cache: yes
+apt_update_cache: true
 
-swap_file_enabled: no
+swap_file_enabled: false
 swap_file: /swapfile
 swap_file_size_kb: 512
 
-ssl_enabled: no
-app_name: commcare_sync
-app_user: "{{ app_name }}"
-home_dir: /home/{{ app_user }}
-app_group: webapps
-project_name: commcare-sync
-base_dir: "{{home_dir}}/www"
-project_dir: "{{ base_dir }}/{{ project_name }}"
-src_dir: "{{ base_dir }}/{{ project_name }}/code_root"
-virtualenv_dir: "{{ src_dir }}/.venv"
-virtualenv_python_version: python3.14  # Used by Superset. TODO: DRY
-run_dir: "{{ base_dir }}/run"
-log_dir: "{{ base_dir }}/log"
-static_dir: "{{ src_dir }}/static_root"
-media_dir: "{{ src_dir }}/media"
+ssl_enabled: false
 
-commcare_sync_export_periodicity: 43200  # 60 * 60 * 12 = every 12 hours
-project_timezone: 'America/New_York'
-commcare_default_server: 'https://www.commcarehq.org'
-
-# superset defaults
-superset_enabled: yes
-superset_ssl_enabled: no
-superset_db_name: "superset"
-superset_project_dir: "{{ base_dir }}/superset"
-superset_virtualenv_dir: "{{ base_dir }}/.virtualenvs/superset"
-superset_username: admin
-superset_firstname: Admin
-superset_lastname: User
-superset_email: superset-admin@example.com
-superset_password: "{{ vault_default_superset_password }}"
-superset_feature_flags: []
-
-postgresql_version: 18
-postgresql_user: postgres
-postgresql_allow_remote_connections: no
-
-default_db_name: "{{ app_name }}"
-default_db_user: "{{ app_name }}"
-default_db_password: "{{ vault_default_db_password }}"
-default_db_host: 127.0.0.1
-default_db_port: 5432
-
-django_settings_module: "{{ app_name }}.settings"
-django_secret_key: "{{ vault_django_secret_key }}"
-django_fernet_keys: "{{ vault_django_fernet_keys }}"
-django_allow_public_signups: no
-django_migrate: true
-django_collectstatic: true
-
-sentry_dsn: "{{ vault_sentry_dsn }}"
-mapbox_api_key: "{{ vault_mapbox_api_key }}"
 superset_secret_key: "{{ vault_superset_secret_key }}"
 
-app_environment:
-  DJANGO_SETTINGS_MODULE: "{{ django_settings_module }}"
+certbot_auto_renew: true
 
-superset_environment:
-  SQLALCHEMY_DATABASE_URI: 'postgresql://{{ default_db_user }}:{{ default_db_password }}@{{ default_db_host }}:{{ default_db_port }}/{{ superset_db_name }}'
-  FLASK_APP: superset
-  SUPERSET_CONFIG_PATH: '{{ superset_project_dir }}/superset_config.py'
-  SECRET_KEY: '{{ vault_superset_secret_key }}'
-
-gunicorn_num_workers: 3
-gunicorn_max_requests: 0
-gunicorn_reload_workers: true
-gunicorn_timeout_seconds: 30
-
-nginx_access_log_file: "{{ log_dir }}/nginx.access.log"
-nginx_error_log_file: "{{ log_dir }}/nginx.error.log"
-
-certbot_auto_renew: yes
 certbot_script: /opt/certbot-auto
 certbot_dir: /etc/letsencrypt
 certbot_admin_email: admin@example.com
 certbot_domains:
   - example.com
   - www.example.com
-
-# Database backup variables
-postgresql_backup_enabled: false
-postgresql_backup_dir: "/var/tmp"
-postgresql_backup_db_list: "superset"
-postgresql_user_home_dir: "/var/lib/postgresql"
-
-...

@@ -2,7 +2,7 @@
 
 public_host: commcare-sync.example.com
 
-superset_enabled: yes
+superset_enabled: true
 superset_public_host: superset.example.com
 
 app_user: "{{ ansible_user }}"
@@ -11,6 +11,4 @@ app_user: "{{ ansible_user }}"
 postgresql_backup_enabled: false
 # Add any other DBs separated with spaces
 postgresql_backup_db_list: "superset"
-postgresql_backups_to_keep: 5  # 0 will ignore this setting
-
-...
+postgresql_backups_to_keep: 5 # 0 will ignore this setting

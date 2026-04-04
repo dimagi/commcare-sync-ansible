@@ -1,0 +1,18 @@
+[Unit]
+Description=Superset daemon
+After=network.target
+
+[Service]
+User={{ app_user }}
+Group={{ app_group }}
+WorkingDirectory={{ superset_project_dir }}
+Environment="PATH={{ superset_virtualenv_dir }}/bin:/usr/local/bin:/usr/bin:/bin"
+{% for key, value in superset_environment.items() %}
+Environment="{{ key }}={{ value }}"
+{% endfor %}
+ExecStart={{ superset_virtualenv_dir }}/bin/superset_start
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,193 @@
+---
+# Virtualenv
+
+- name: Sync virtualenv.
+  become: true
+  become_user: "{{ app_user }}"
+  ansible.builtin.command:
+    cmd: "{{ ansible_env.HOME }}/.local/bin/uv sync --frozen --extra prod --extra postgres --extra mysql --extra odbc"
+    chdir: "{{ src_dir }}"
+  args:
+    creates: "{{ virtualenv_dir }}/bin/activate"
+  tags:
+    - deploy
+    - django
+
+- name: Create the virtualenv postactivate script to set environment variables.
+  ansible.builtin.template:
+    src: django/virtualenv_postactivate_script.sh.j2
+    dest: "{{ virtualenv_dir }}/bin/postactivate"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0750"
+    backup: true
+  tags:
+    - deploy
+    - django
+
+# Source
+
+- name: Create {{ project_dir }}.
+  ansible.builtin.file:
+    path: "{{ project_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0750"
+    state: directory
+  tags:
+    - deploy
+    - django
+
+- name: Pull latest source code.
+  become: true
+  become_user: "{{ app_user }}"
+  ansible.builtin.git:
+    repo: https://github.com/dimagi/commcare-sync.git
+    dest: "{{ src_dir }}"
+    version: master
+    recursive: false
+    accept_hostkey: true
+  tags:
+    - deploy
+    - django
+
+- name: Create the app folders.
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0750"
+    state: directory
+  with_items:
+    - "{{ log_dir }}"
+    - "{{ run_dir }}"
+    - "{{ static_dir }}"
+    - "{{ media_dir }}"
+  tags:
+    - deploy
+    - django
+
+# Django
+
+- name: Create the local settings file
+  ansible.builtin.template:
+    src: django/settings_local.py.j2
+    dest: "{{ src_dir }}/{{ app_name }}/settings_local.py"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0640"
+    backup: true
+  tags:
+    - deploy
+    - django
+
+- name: Run Django database migrations.
+  become: true
+  become_user: "{{ app_user }}"
+  ansible.builtin.command:
+    cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py migrate --database {{ item }} --no-input"
+    chdir: "{{ src_dir }}"
+  environment: "{{ app_environment }}"
+  with_items:
+    - default
+  when: django_migrate is defined and django_migrate
+  register: django_migrate_result
+  changed_when: "'No migrations to apply' not in django_migrate_result.stdout"
+  tags:
+    - deploy
+    - django
+
+- name: Run Django collectstatic.
+  become: true
+  become_user: "{{ app_user }}"
+  ansible.builtin.command:
+    cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py collectstatic --no-input"
+    chdir: "{{ src_dir }}"
+  environment: "{{ app_environment }}"
+  when: django_collectstatic is defined and django_collectstatic
+  register: django_collectstatic_result
+  changed_when: "'0 static files copied' not in django_collectstatic_result.stdout"
+  tags:
+    - deploy
+    - django
+
+# Start scripts + systemd
+
+- name: Create the Gunicorn start script.
+  ansible.builtin.template:
+    src: django/gunicorn_start_script.j2
+    dest: "{{ virtualenv_dir }}/bin/gunicorn_start"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0750"
+    backup: true
+  tags:
+    - deploy
+    - django
+    - systemd
+
+- name: Create the Celery default start script.
+  ansible.builtin.template:
+    src: django/celery_default_start_script.j2
+    dest: "{{ virtualenv_dir }}/bin/celery_default_start"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0750"
+    backup: true
+  tags:
+    - deploy
+    - django
+    - systemd
+
+- name: Create systemd service files.
+  ansible.builtin.template:
+    src: "systemd/{{ item }}.service.j2"
+    dest: /etc/systemd/system/{{ item }}.service
+    owner: root
+    group: root
+    mode: "0644"
+  with_items:
+    - gunicorn
+    - celery
+  tags:
+    - deploy
+    - django
+    - systemd
+
+- name: Reload systemd daemon.
+  ansible.builtin.systemd:
+    daemon_reload: true
+  tags:
+    - deploy
+    - django
+    - systemd
+
+- name: Enable and start systemd services.
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  with_items:
+    - gunicorn
+    - celery
+  tags:
+    - deploy
+    - django
+    - systemd
+
+- name: Create log files.
+  ansible.builtin.copy:
+    content: ""
+    dest: "{{ log_dir }}/{{ item }}"
+    force: false
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0644"
+  with_items:
+    - celery.log
+    - gunicorn.log
+    - django.log
+  tags:
+    - deploy
+    - django
+    - systemd

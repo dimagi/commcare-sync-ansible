@@ -1,9 +1,0 @@
-
-
-- name: Install Redis
-  apt:
-    name:
-      - redis-server
-    update_cache: "{{ apt_update_cache }}"
-    state: present
-  tags: redis

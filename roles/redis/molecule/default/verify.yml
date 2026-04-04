@@ -1,0 +1,25 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Check if Redis is running
+      ansible.builtin.command: pgrep redis-server
+      register: redis_process
+      changed_when: false
+
+    - name: Assert Redis process is running
+      ansible.builtin.assert:
+        that: redis_process.rc == 0
+        fail_msg: "Redis process is not running"
+
+    - name: Check if Redis is listening on port 6379
+      ansible.builtin.wait_for:
+        port: 6379
+        timeout: 5
+      register: redis_port
+
+    - name: Assert Redis is listening
+      ansible.builtin.assert:
+        that: redis_port.state == 'started'
+        fail_msg: "Redis is not listening on port 6379"

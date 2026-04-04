@@ -1,0 +1,33 @@
+---
+- name: Install AWS cli
+  ansible.builtin.apt:
+    name: awscli
+  tags:
+    - packages
+    - aws_setup
+    - postgres_backup
+
+- name: Create aws config directory for {{ postgresql_user }}
+  become: true
+  ansible.builtin.file:
+    path: "{{ postgresql_user_home_dir }}/.aws"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_user }}"
+    mode: "0700"
+    state: directory
+  tags:
+    - aws_setup
+    - postgres_backup
+
+- name: Set up ~/.aws/credentials for {{ postgresql_user }}
+  become: true
+  ansible.builtin.template:
+    src: "system/aws_credentials.j2"
+    dest: "{{ postgresql_user_home_dir }}/.aws/credentials"
+    group: "{{ postgresql_user }}"
+    owner: "{{ postgresql_user }}"
+    mode: "0700"
+    backup: true
+  tags:
+    - aws_setup
+    - postgres_backup

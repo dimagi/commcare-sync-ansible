@@ -1,0 +1,127 @@
+---
+- name: Add the PostgreSQL repository key to the apt trusted keys.
+  ansible.builtin.apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    id: ACCC4CF8
+    state: present
+  tags:
+    - provision
+    - postgres
+
+- name: Add the PostgreSQL repository to the apt sources list.
+  ansible.builtin.apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
+    update_cache: "{{ apt_update_cache }}"
+    state: present
+    filename: postgres
+  tags:
+    - provision
+    - postgres
+
+- name: Ensure locale is available.
+  community.general.locale_gen:
+    name: en_US.UTF-8
+    state: present
+  tags:
+    - provision
+    - postgres
+
+- name: Set default locale.
+  ansible.builtin.copy:
+    dest: /etc/default/locale
+    content: 'LANG="en_US.UTF-8"'
+    mode: "0644"
+  tags:
+    - provision
+    - postgres
+
+- name: Install PostgreSQL {{ postgresql_version }}.
+  ansible.builtin.apt:
+    name:
+      - postgresql-{{ postgresql_version }}
+      - postgresql-contrib-{{ postgresql_version }}
+      - "{{ base_python_package }}-psycopg2"
+    update_cache: "{{ apt_update_cache }}"
+    state: present
+  tags:
+    - provision
+    - packages
+    - postgres
+
+- name: Create PostgreSQL cluster
+  become: true
+  become_user: "{{ postgresql_user }}"
+  ansible.builtin.command: "pg_createcluster -u {{ postgresql_user }} --no-status {{ postgresql_version }} main"
+  args:
+    creates: "/etc/postgresql/{{ postgresql_version }}/main"
+  tags:
+    - provision
+    - postgres
+
+- name: Create PostgreSQL config
+  become: true
+  become_user: "{{ postgresql_user }}"
+  ansible.builtin.template:
+    src: postgres/postgresql.conf.j2
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    mode: "0640"
+  notify: Restart postgresql
+  tags:
+    - provision
+    - postgres
+
+- name: Create PostgreSQL ACL
+  become: true
+  become_user: "{{ postgresql_user }}"
+  ansible.builtin.template:
+    src: postgres/pg_hba.conf.j2
+    dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+    mode: "0640"
+  notify: Restart postgresql
+  tags:
+    - provision
+    - postgres
+
+- name: Ensure the PostgreSQL service is running.
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+  tags:
+    - provision
+    - postgres
+
+- name: Ensure the default user exists.
+  become: true
+  become_user: "{{ postgresql_user }}"
+  community.postgresql.postgresql_user:
+    name: "{{ default_db_user }}"
+    password: "{{ default_db_password }}"
+    role_attr_flags: NOSUPERUSER,CREATEDB
+    encrypted: true
+    state: present
+  tags:
+    - provision
+    - postgres
+
+- name: Ensure the default database exists.
+  become: true
+  become_user: "{{ postgresql_user }}"
+  community.postgresql.postgresql_db:
+    name: "{{ default_db_name }}"
+    encoding: "UTF-8"
+    lc_collate: "en_US.UTF-8"
+    lc_ctype: "en_US.UTF-8"
+    template: "template1"
+    owner: "{{ default_db_user }}"
+    state: present
+  tags:
+    - provision
+    - postgres
+
+- name: Include postgres backup tasks
+  ansible.builtin.include_tasks: pg_backup.yml
+  tags:
+    - provision
+    - postgres_backup
+  when: postgresql_backup_enabled

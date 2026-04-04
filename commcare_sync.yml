@@ -1,16 +1,20 @@
 ---
 # Issue: https://github.com/ansible/ansible/issues/57529#issuecomment-513143430
-- hosts: all
+- name: Gather facts
+  hosts: all
 
 - name: Create CommCare Data Pipeline server.
   hosts: all
-  become: yes
+  become: true
   become_user: root
 
-  gather_facts: no
-
+  gather_facts: false
 
   roles:
+    - postgres
+    - redis
+    - nginx
+    - role: superset
+      when: superset_enabled
+    - django
     - commcare_sync
-
-...

@@ -15,8 +15,8 @@ Services
 --------
 
 The complete list of services is available in the
-[roles/commcare_sync/tasks/main.yml](https://github.com/dimagi/commcare-sync-ansible/blob/master/roles/commcare_sync/tasks/main.yml)
-file.
+[commcare_sync.yml](https://github.com/dimagi/commcare-sync-ansible/blob/master/commcare_sync.yml)
+playbook and its individual roles under `roles/`.
 
 The most important ones are summarized on the
 [What's Installed](whats-installed.md) page.
@@ -115,12 +115,12 @@ environment is in `~ansible/www/.virtualenvs/superset`.
 
 ### Other Useful Commands
 
-| Task                             | Command                                     |
-|----------------------------------|---------------------------------------------|
-| See running Supervisor processes | `sudo supervisorctl status`                 |
-| Restart a Supervisor process     | `sudo supervisorctl restart [process name]` |
-| Connect to the local database    | `sudo -u postgres psql`                     |
-| Restart nginx                    | `sudo service nginx restart`                |
+| Task                           | Command                                       |
+|--------------------------------|-----------------------------------------------|
+| See running services           | `sudo systemctl status gunicorn celery superset` |
+| Restart a service              | `sudo systemctl restart [service name]`       |
+| Connect to the local database  | `sudo -u postgres psql`                       |
+| Restart nginx                  | `sudo systemctl restart nginx`                |
 
 
 ### Checking for Stuck Exports
