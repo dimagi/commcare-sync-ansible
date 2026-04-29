@@ -34,6 +34,13 @@ CSRF_TRUSTED_ORIGINS = [
     'https://{{ public_host }}',
 ]
 
+{% if uses_proxy_always %}
+# HTTPS is terminated at an upstream proxy; trust its X-Forwarded-Proto
+# so Django builds https:// URLs and CSRF origin checks succeed.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+{% endif %}
+
 DEBUG = False
 
 COMMCARE_SYNC_EXPORT_PERIODICITY = {{ commcare_sync_export_periodicity }}

@@ -1,6 +1,13 @@
 ---
 
 public_host: commcare-sync.example.com
+ssl_enabled: true
+
+# Set to true when an upstream proxy always terminates HTTPS in front of nginx
+# and forwards X-Forwarded-Proto. Enables Django's SECURE_PROXY_SSL_HEADER and
+# the corresponding nginx header pass-through. Only safe when gunicorn is not
+# directly reachable from clients, otherwise the header can be spoofed.
+uses_proxy_always: true
 
 superset_enabled: true
 superset_public_host: superset.example.com
