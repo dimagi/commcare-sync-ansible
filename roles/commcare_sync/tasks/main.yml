@@ -19,7 +19,7 @@
 
 - name: Install security updates.
   ansible.builtin.apt:
-    default_release: "{{ ansible_distribution_release }}-security"
+    default_release: "{{ ansible_facts['distribution_release'] }}-security"
     update_cache: "{{ apt_update_cache }}"
     upgrade: dist
   tags:
