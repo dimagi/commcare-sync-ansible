@@ -1,16 +1,29 @@
 ---
-- name: Add the PostgreSQL repository key to the apt trusted keys.
-  ansible.builtin.apt_key:
+- name: Ensure /etc/apt/keyrings exists.
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  tags:
+    - provision
+    - postgres
+
+- name: Install the PostgreSQL repository signing key.
+  ansible.builtin.get_url:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-    id: ACCC4CF8
-    state: present
+    dest: /etc/apt/keyrings/postgresql.asc
+    owner: root
+    group: root
+    mode: "0644"
   tags:
     - provision
     - postgres
 
 - name: Add the PostgreSQL repository to the apt sources list.
   ansible.builtin.apt_repository:
-    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_facts['distribution_release'] }}-pgdg main"
+    repo: "deb [signed-by=/etc/apt/keyrings/postgresql.asc] http://apt.postgresql.org/pub/repos/apt/ {{ ansible_facts['distribution_release'] }}-pgdg main"
     update_cache: "{{ apt_update_cache }}"
     state: present
     filename: postgres
