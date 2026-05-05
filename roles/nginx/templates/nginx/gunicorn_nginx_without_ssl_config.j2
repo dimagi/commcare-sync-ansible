@@ -34,7 +34,10 @@ server {
 
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 {% if uses_proxy_always | default(false) %}
-    proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+    # uses_proxy_always asserts an upstream HTTPS proxy fronts this server,
+    # so hardcode the scheme rather than trusting whatever the proxy forwards
+    # (some proxies omit X-Forwarded-Proto entirely).
+    proxy_set_header X-Forwarded-Proto https;
     proxy_set_header Host $http_host;
 {% else %}
     proxy_set_header Host $server_name;
