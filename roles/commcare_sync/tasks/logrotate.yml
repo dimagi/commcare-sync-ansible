@@ -2,16 +2,16 @@
 - name: Configure logrotate for CommCare Data Pipeline logs
   community.general.logrotate:
     name: commcare-sync
-    path: "{{ log_dir }}/*.log"
-    options:
-      - weekly
-      - size 50M
-      - rotate 8
-      - missingok
-      - compress
-      - delaycompress
-      - copytruncate
-      - notifempty
+    paths:
+      - "{{ log_dir }}/*.log"
+    rotation_period: weekly
+    size: 50M
+    rotate_count: 8
+    missing_ok: true
+    compress: true
+    delay_compress: true
+    copy_truncate: true
+    not_if_empty: true
   tags:
     - provision
     - logging
