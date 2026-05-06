@@ -4,10 +4,10 @@
   become_user: "{{ app_user }}"
   ansible.builtin.shell: # noqa: command-instead-of-module
     cmd: set -o pipefail && curl -LsSf https://astral.sh/uv/install.sh | sh
-    chdir: "{{ ansible_env.HOME }}"
+    chdir: "{{ ansible_facts['env'].HOME }}"
     executable: /bin/bash
   args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/uv"
+    creates: "{{ ansible_facts['env'].HOME }}/.local/bin/uv"
   environment:
-    UV_INSTALL_DIR: "{{ ansible_env.HOME }}/.local/bin"
+    UV_INSTALL_DIR: "{{ ansible_facts['env'].HOME }}/.local/bin"
   changed_when: false

@@ -5,7 +5,7 @@
   become: true
   become_user: "{{ app_user }}"
   ansible.builtin.command:
-    cmd: "{{ ansible_env.HOME }}/.local/bin/uv sync --frozen --extra prod --extra postgres --extra mysql --extra odbc"
+    cmd: "{{ ansible_facts['env'].HOME }}/.local/bin/uv sync --frozen --extra prod --extra postgres --extra mysql --extra odbc"
     chdir: "{{ src_dir }}"
   args:
     creates: "{{ virtualenv_dir }}/bin/activate"
@@ -85,7 +85,7 @@
   become: true
   become_user: "{{ app_user }}"
   ansible.builtin.command:
-    cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py migrate --database {{ item }} --no-input"
+    cmd: "{{ ansible_facts['env'].HOME }}/.local/bin/uv run manage.py migrate --database {{ item }} --no-input"
     chdir: "{{ src_dir }}"
   environment: "{{ app_environment }}"
   with_items:
@@ -101,7 +101,7 @@
   become: true
   become_user: "{{ app_user }}"
   ansible.builtin.command:
-    cmd: "{{ ansible_env.HOME }}/.local/bin/uv run manage.py collectstatic --no-input"
+    cmd: "{{ ansible_facts['env'].HOME }}/.local/bin/uv run manage.py collectstatic --no-input"
     chdir: "{{ src_dir }}"
   environment: "{{ app_environment }}"
   when: django_collectstatic is defined and django_collectstatic
